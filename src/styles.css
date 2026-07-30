@@ -1,0 +1,566 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * CanteenOS design system.
+ * Dark-first premium SaaS aesthetic: near-black canvas, lime-green primary,
+ * cyan accent, glass surfaces, aurora gradients.
+ */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 18px);
+  --radius-4xl: calc(var(--radius) + 26px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* Light theme: warm "paper" canvas instead of pure white, with a deep
+     forest-green primary so text and accents stay legible on light surfaces. */
+  --background: oklch(0.962 0.008 106);
+  --foreground: oklch(0.21 0.02 150);
+  --card: oklch(0.988 0.005 106);
+  --card-foreground: oklch(0.21 0.02 150);
+  --popover: oklch(0.99 0.004 106);
+  --popover-foreground: oklch(0.21 0.02 150);
+  --primary: oklch(0.53 0.14 145);
+  --primary-foreground: oklch(0.985 0.01 120);
+  --secondary: oklch(0.925 0.012 110);
+  --secondary-foreground: oklch(0.26 0.02 150);
+  --muted: oklch(0.925 0.012 110);
+  --muted-foreground: oklch(0.45 0.02 150);
+  --accent: oklch(0.55 0.1 205);
+  --accent-foreground: oklch(0.985 0.008 205);
+  --destructive: oklch(0.55 0.21 27);
+  --destructive-foreground: oklch(0.99 0.003 250);
+  --success: oklch(0.52 0.14 152);
+  --success-foreground: oklch(0.98 0.01 152);
+  --warning: oklch(0.62 0.14 76);
+  --warning-foreground: oklch(0.99 0.01 76);
+  --info: oklch(0.53 0.12 232);
+  --info-foreground: oklch(0.98 0.01 232);
+  --border: oklch(0.878 0.014 110);
+  --input: oklch(0.878 0.014 110);
+  --ring: oklch(0.53 0.14 145);
+  --surface: oklch(0.988 0.005 106 / 78%);
+  --surface-elevated: oklch(0.995 0.004 106);
+
+  --chart-1: oklch(0.56 0.15 145);
+  --chart-2: oklch(0.55 0.11 205);
+  --chart-3: oklch(0.52 0.15 296);
+  --chart-4: oklch(0.63 0.15 76);
+  --chart-5: oklch(0.55 0.18 20);
+
+  --sidebar: oklch(0.978 0.006 106);
+  --sidebar-foreground: oklch(0.23 0.02 150);
+  --sidebar-primary: oklch(0.53 0.14 145);
+  --sidebar-primary-foreground: oklch(0.985 0.01 120);
+  --sidebar-accent: oklch(0.925 0.012 110);
+  --sidebar-accent-foreground: oklch(0.23 0.02 150);
+  --sidebar-border: oklch(0.878 0.014 110);
+  --sidebar-ring: oklch(0.53 0.14 145);
+
+
+  --gradient-aurora:
+    radial-gradient(
+      60% 50% at 15% 10%,
+      color-mix(in oklab, var(--primary) 28%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 45% at 85% 5%,
+      color-mix(in oklab, var(--accent) 30%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 45% at 50% 100%,
+      color-mix(in oklab, var(--accent) 16%, transparent),
+      transparent 70%
+    );
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    color-mix(in oklab, var(--accent) 70%, var(--primary)) 100%
+  );
+  /* Elevation scale — one ramp used by every surface in the app. */
+  --shadow-hairline: inset 0 1px 0 oklch(1 0 0 / 55%);
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 5%);
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 5%), 0 8px 24px -14px oklch(0 0 0 / 22%);
+  --shadow-md: 0 2px 4px oklch(0 0 0 / 5%), 0 16px 40px -18px oklch(0 0 0 / 26%);
+  --shadow-lg: 0 4px 8px oklch(0 0 0 / 6%), 0 32px 64px -24px oklch(0 0 0 / 32%);
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 26%, transparent),
+    0 18px 46px -20px color-mix(in oklab, var(--primary) 50%, transparent);
+}
+
+
+.dark {
+  --background: oklch(0.135 0 0);
+  --foreground: oklch(0.97 0.004 250);
+  --card: oklch(0.185 0.012 265);
+  --card-foreground: oklch(0.97 0.004 250);
+  --popover: oklch(0.195 0.012 265);
+  --popover-foreground: oklch(0.97 0.004 250);
+  --primary: oklch(0.91 0.22 124);
+  --primary-foreground: oklch(0.16 0.05 130);
+  --secondary: oklch(0.245 0.012 265);
+  --secondary-foreground: oklch(0.95 0.004 250);
+  --muted: oklch(0.235 0.012 265);
+  --muted-foreground: oklch(0.68 0.016 258);
+  --accent: oklch(0.82 0.13 202);
+  --accent-foreground: oklch(0.16 0.04 220);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0.003 250);
+  --success: oklch(0.75 0.17 152);
+  --success-foreground: oklch(0.15 0.03 152);
+  --warning: oklch(0.83 0.16 82);
+  --warning-foreground: oklch(0.18 0.04 82);
+  --info: oklch(0.75 0.13 232);
+  --info-foreground: oklch(0.15 0.03 232);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.91 0.22 124 / 55%);
+  --surface: oklch(0.22 0.012 265 / 60%);
+  --surface-elevated: oklch(0.215 0.012 265);
+
+  --chart-1: oklch(0.91 0.22 124);
+  --chart-2: oklch(0.82 0.13 202);
+  --chart-3: oklch(0.72 0.16 296);
+  --chart-4: oklch(0.83 0.16 82);
+  --chart-5: oklch(0.68 0.2 20);
+
+  --sidebar: oklch(0.165 0.01 265);
+  --sidebar-foreground: oklch(0.93 0.004 250);
+  --sidebar-primary: oklch(0.91 0.22 124);
+  --sidebar-primary-foreground: oklch(0.16 0.05 130);
+  --sidebar-accent: oklch(0.24 0.012 265);
+  --sidebar-accent-foreground: oklch(0.96 0.004 250);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.91 0.22 124 / 55%);
+
+  /* On dark the hairline is a faint top highlight and shadows go deeper. */
+  --shadow-hairline: inset 0 1px 0 oklch(1 0 0 / 6%);
+  --shadow-xs: 0 1px 2px oklch(0 0 0 / 40%);
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 40%), 0 10px 28px -16px oklch(0 0 0 / 70%);
+  --shadow-md: 0 2px 6px oklch(0 0 0 / 45%), 0 20px 44px -20px oklch(0 0 0 / 75%);
+  --shadow-lg: 0 6px 14px oklch(0 0 0 / 50%), 0 36px 72px -28px oklch(0 0 0 / 85%);
+}
+
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  }
+
+  h1 {
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Numbers in metrics/tables never jitter between renders. */
+  table,
+  time,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 30%, transparent);
+    color: var(--foreground);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--muted-foreground) 30%, transparent);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@utility aurora {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 130%;
+    background-image: var(--gradient-aurora);
+    filter: blur(20px);
+    opacity: 0.75;
+    z-index: -1;
+    pointer-events: none;
+    animation: aurora-drift 18s ease-in-out infinite alternate;
+  }
+}
+
+@utility glass {
+  background-color: var(--surface);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft), var(--shadow-hairline);
+}
+
+@utility glass-panel {
+  background-color: var(--surface);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md), var(--shadow-hairline);
+}
+
+@utility text-gradient {
+  background-image: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility hover-lift {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in oklab, var(--primary) 32%, var(--border));
+  }
+}
+
+@utility glow-ring {
+  box-shadow: var(--shadow-glow);
+}
+
+
+
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Premium FX layer: gradient mesh, orbs, noise, glass reflections, ripple.
+ * ------------------------------------------------------------------------- */
+
+@utility gradient-mesh {
+  background-image:
+    radial-gradient(
+      38% 42% at 12% 18%,
+      color-mix(in oklab, var(--primary) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 40% at 86% 12%,
+      color-mix(in oklab, var(--accent) 22%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      46% 46% at 70% 88%,
+      color-mix(in oklab, var(--primary) 14%, transparent),
+      transparent 74%
+    ),
+    radial-gradient(
+      40% 40% at 20% 92%,
+      color-mix(in oklab, var(--accent) 14%, transparent),
+      transparent 72%
+    );
+  filter: blur(30px);
+}
+
+@utility noise-overlay {
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@utility glass-reflect {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      color-mix(in oklab, var(--primary) 12%, transparent) 45%,
+      color-mix(in oklab, white 18%, transparent) 50%,
+      transparent 62%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  &:hover::after {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes mesh-drift {
+  0% {
+    transform: translate3d(-1%, -1%, 0) scale(1.05);
+  }
+  50% {
+    transform: translate3d(2%, 1%, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-1%, -1%, 0) scale(1.05);
+  }
+}
+@utility animate-mesh-drift {
+  animation: mesh-drift 24s ease-in-out infinite;
+}
+
+@keyframes orb-float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -6%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@utility animate-orb-float {
+  animation: orb-float 18s ease-in-out infinite;
+}
+@utility animate-orb-float-slow {
+  animation: orb-float 28s ease-in-out infinite reverse;
+}
+
+@keyframes fx-ripple {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* `data-motion="full"` = the user explicitly opted back into motion. */
+  html:not([data-motion="full"]) .animate-mesh-drift,
+  html:not([data-motion="full"]) .animate-orb-float,
+  html:not([data-motion="full"]) .animate-orb-float-slow {
+    animation: none;
+  }
+}
+
+/* Explicit "Reduced" choice in Settings — mirrors the OS setting site-wide. */
+html[data-motion="reduced"] .animate-mesh-drift,
+html[data-motion="reduced"] .animate-orb-float,
+html[data-motion="reduced"] .animate-orb-float-slow {
+  animation: none;
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Shared surface + typography primitives. Every card, panel and table in the
+ * app composes these so elevation and rhythm stay identical across screens.
+ * ------------------------------------------------------------------------- */
+
+@utility surface-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background-color: var(--card);
+  box-shadow: var(--shadow-soft), var(--shadow-hairline);
+}
+
+@utility surface-raised {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background-color: var(--surface-elevated);
+  box-shadow: var(--shadow-md), var(--shadow-hairline);
+}
+
+/* Uppercase micro-label used above metrics, table heads and section groups. */
+@utility label-micro {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px color-mix(in oklab, var(--primary) 60%, transparent);
+  }
+}
+
+/* Skeletons sweep instead of pulsing — reads calmer on dense dashboards. */
+@utility shimmer {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--foreground) 8%, transparent),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) .shimmer::after {
+    animation: none;
+  }
+}
+
+html[data-motion="reduced"] .shimmer::after {
+  animation: none;
+}
+
+/* Print: drop chrome and effects so Print / Save-as-PDF is readable. */
+@media print {
+  aside,
+  nav,
+  header,
+  [data-sidebar],
+  [data-print-hide] {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .surface-card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    break-inside: avoid;
+  }
+  main {
+    padding: 0 !important;
+  }
+}

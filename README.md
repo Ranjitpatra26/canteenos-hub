@@ -1,7 +1,7 @@
 <div align="center">
 
 # ⚡ CANTEENOS KITCHEN HUB ⚡
-### *Next-Gen Event-Driven Smart Canteen & Real-Time Kitchen Operating System*
+### *The Ultimate Guide to CanteenOS — Plain-English Primer & Developer Architecture Blueprint*
 
 ```text
   ██████╗░█████╗░███╗░░██╗████████╗███████╗███████╗███╗░░██╗██████╗░██████╗
@@ -12,9 +12,7 @@
   ░╚═════╝╚═╝░░╚═╝╚═╝░░╚══╝░░░╚═╝░░░╚══════╝╚══════╝╚═╝░░╚══╝╚═════╝░╚═╝░░░░░
 ```
 
-**High-Performance, Zero-Polling, Offline-Resilient Kitchen & Cafeteria Operations Platform**
-
-*Order ahead • Skip the lunch queue • Live WebSocket kitchen stream • Dynamic QR pickup pass • On-Device AI recommendations*
+**Order Ahead • Skip the Queue • Real-Time Kitchen Stream • Dynamic QR Pickup • On-Device AI**
 
 ![CanteenOS Hero Banner](docs/images/hero-banner.png)
 
@@ -28,25 +26,106 @@
 [![Playwright Tested](https://img.shields.io/badge/Playwright-E2E_Coverage-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[🚀 System Topology](#-system-topology--event-driven-architecture) · [📊 Database ERD](#-database-schema--entity-relationship-diagram-erd) · [🔐 Security & RLS Policies](#-security-architecture--kernel-level-rbac) · [🧠 On-Device AI Engine](#-on-device-canteen-ai-recommendation-engine) · [⚡ Low-Level Code Internals](#-low-level-code-internals--engineering-highlights)
+[🌟 Plain-English Overview](#-plain-english-executive-overview) · [👥 User Role Guides](#-quick-start-by-user-role) · [🏗️ System Topology](#-system-topology--event-driven-architecture) · [🗺️ Complete UI Route Map](#-complete-ui-route--feature-map) · [📊 Database ERD](#-database-schema--entity-relationship-diagram-erd) · [🔐 Security & RLS](#-security-architecture--kernel-level-rbac) · [🧠 On-Device AI](#-on-device-canteen-ai-recommendation-engine) · [⚡ Developer Setup](#-developer-setup--getting-started)
 
 </div>
 
 ---
 
-## ⚡ Performance Benchmarks & Engineering KPI Matrix
+## 📋 Master Table of Contents
 
-> [!IMPORTANT]
-> CanteenOS is engineered for mission-critical campus cafeteria operations handling peak traffic spikes during lunch hours. The platform guarantees the following system SLAs:
+1. [🌟 Plain-English Executive Overview](#-plain-english-executive-overview)
+2. [💡 How CanteenOS Works in 4 Simple Steps](#-how-canteenos-works-in-4-simple-steps)
+3. [👥 Quick-Start Guide by User Role](#-quick-start-by-user-role)
+4. [🖼️ System Visual Showcase](#-system-visual-showcase)
+5. [🗺️ Complete UI Route & Feature Map](#-complete-ui-route--feature-map)
+6. [🏗️ System Topology & Event-Driven Architecture](#-system-topology--event-driven-architecture)
+7. [👨‍🍳 Real-Time Kitchen Kanban Display System](#-real-time-kitchen-kanban-display-system)
+8. [📊 Database Schema & Entity Relationship Diagram (ERD)](#-database-schema--entity-relationship-diagram-erd)
+9. [🔐 Security Architecture & Kernel-Level RBAC](#-security-architecture--kernel-level-rbac)
+10. [🧠 On-Device Canteen AI Recommendation Engine](#-on-device-canteen-ai-recommendation-engine)
+11. [⚡ Low-Level Code Internals & Technical Highlights](#-low-level-code-internals--engineering-highlights)
+12. [📁 Complete Directory Blueprint & Codebase Tree](#-complete-directory-blueprint--codebase-tree)
+13. [⚙️ Developer Setup & Getting Started](#-developer-setup--getting-started)
+14. [🧪 Testing, QA & Load Simulation](#-testing-qa--load-simulation)
+15. [🚢 Multi-Cloud Production Deployment](#-multi-cloud-production-deployment)
+16. [🛠️ Troubleshooting & FAQ](#-troubleshooting--faq)
 
-| Metric | Measured Target | Technical Mechanism |
-| :--- | :--- | :--- |
-| **WebSocket Sync Latency** | **`< 45 ms`** | Supabase Realtime Postgres Write-Ahead Log (WAL) Change Data Capture (CDC) streaming |
-| **3D WebGL Rendering** | **`60 FPS`** | React Three Fiber canvas paired with hardware concurrency GPU tiering (`usePerfTier`) |
-| **PWA Offline Resilience** | **`100% Zero Data Loss`** | Storage-synced IndexedDB mutation queue with auto-retry listeners (`useOfflineQueue`) |
-| **SSR Hydration Time** | **`< 180 ms`** | TanStack Start SSR + Nitro serverless edge compilation |
-| **Database RLS Security** | **`100% Enforced`** | PostgreSQL `SECURITY DEFINER` functions guarding row-level access control on all queries |
-| **Client Bundle Size** | **`< 145 KB (gzip)`**| Code-split route chunks via TanStack Router with dynamic lazy imports |
+---
+
+## 🌟 Plain-English Executive Overview
+
+### What is CanteenOS?
+Think of **CanteenOS** as an **all-in-one digital operating system for university cafeterias, office canteens, and food courts**. 
+
+Just like Uber Eats lets you order food on your phone, CanteenOS lets students and staff order meals ahead of time directly on their phones. But unlike public delivery apps, CanteenOS connects **directly to a live touchscreen in the kitchen** and an **executive dashboard in the canteen manager's office**.
+
+### The Problem It Solves
+1. ⏰ **No More 20-Minute Lunch Lines**: Students build their cart, pay on their phone, and receive an instant pickup pass with a QR code. They only walk to the counter when their phone alerts them that their meal is cooked and ready.
+2. 👨‍🍳 **No More Blind Kitchen Rushes**: Kitchen staff see incoming tickets automatically organized by station (Grill, Beverages, Hot Food) on a real-time Kanban prep board.
+3. 📊 **No More Lost Revenue or Food Waste**: Canteen owners get real-time analytics on daily revenue, peak order hours, raw ingredient inventory levels, and staff shifts.
+
+---
+
+## 💡 How CanteenOS Works in 4 Simple Steps
+
+```
+┌─────────────────────────┐    ┌─────────────────────────┐    ┌─────────────────────────┐    ┌─────────────────────────┐
+│ 1. Student Orders       │    │ 2. Kitchen Cooks        │    │ 3. Instant Notification │    │ 4. QR Pickup Pass       │
+│ Browse menu, customize  │ ──►│ Order lands on Kitchen  │ ──►│ Student phone alerts:   │ ──►│ Student scans QR code   │
+│ dish, checkout on PWA.  │    │ Kanban board instantly. │    │ "Food is Ready! 🍔"    │    │ at counter and enjoys!  │
+└─────────────────────────┘    └─────────────────────────┘    └─────────────────────────┘    └─────────────────────────┘
+```
+
+1. 🎓 **Step 1: Student Places Order**: The student opens the CanteenOS PWA on their phone, filters by dietary tags (Veg, Gluten-Free), applies coupons, and places an order.
+2. 👨‍🍳 **Step 2: Kitchen Receives Order Instantly**: In `< 45 milliseconds`, the order pops up on the kitchen's Kanban touchscreen. An audio chime plays to alert chefs.
+3. 🔔 **Step 3: Real-Time Prep Updates**: As the kitchen moves the ticket from *"Preparing"* to *"Ready for Pickup"*, the student's phone updates automatically without needing to refresh.
+4. ⚡ **Step 4: Scan QR Code & Pickup**: The student walks to the counter, shows their animated QR code pass, the staff scans it, and the order is marked completed.
+
+---
+
+## 👥 Quick-Start Guide by User Role
+
+Whether you are a student, a line cook, a canteen owner, or a software engineer, here is how CanteenOS fits your workflow:
+
+### 🎓 1. For Students & Customers
+- **Goal**: Order food fast, track prep status, and skip lines.
+- **Key Routes**: `/app/menu`, `/app/cart`, `/app/checkout`, `/app/orders/$orderId`, `/app/ai`
+- **What You Can Do**:
+  - Browse interactive food menus with dietary filters (Vegan, High Protein, Low Calorie).
+  - Ask **Canteen AI** for meal suggestions (*"Find me lunch under $8 with high protein"*).
+  - Save favorite dishes and earn discount coupons.
+  - Track live order status timelines (Placed ➔ Preparing ➔ Ready for Pickup).
+  - Show your dynamic QR Code pass at the counter for instant verification.
+
+### 👨‍🍳 2. For Kitchen Staff & Chefs
+- **Goal**: Prep orders fast, eliminate order mix-ups, and manage kitchen load.
+- **Key Routes**: `/kitchen`, `/kitchen/history`, `/kitchen/menu`
+- **What You Can Do**:
+  - View incoming orders on a touch-friendly **Kanban Display Board**.
+  - Filter tickets by station queue (`Grill`, `Fryer`, `Beverages`, `Bakery`).
+  - Drag or click cards to update status (`Preparing` ➔ `Ready`).
+  - Listen for Web Audio chime alerts when new orders land during peak rush.
+  - Scan student QR codes using your phone/tablet camera to complete orders.
+
+### 🛡️ 3. For Canteen Managers & Executives
+- **Goal**: Maximize gross profit, monitor inventory stock, schedule staff, and prevent food waste.
+- **Key Routes**: `/admin`, `/admin/analytics`, `/admin/inventory`, `/admin/workforce`, `/admin/reports`
+- **What You Can Do**:
+  - View real-time gross revenue, order volume, and top-selling dishes.
+  - Track raw material inventory levels (stock movements, minimum threshold warnings, purchase orders).
+  - Build staff shift rotas and manage attendance logs.
+  - Export custom financial & operational reports to CSV or Excel.
+  - Manage multi-campus / multi-canteen organization hierarchies.
+
+### 💻 4. For Developers & Engineers
+- **Goal**: Understand the codebase, customize features, and run/deploy the system.
+- **Tech Stack**: React 19, TypeScript 5.8, TanStack Start, Supabase Postgres/Realtime, Three.js WebGL, Tailwind v4.
+- **What You Can Do**:
+  - Run the dev server locally with `npm run dev`.
+  - Explore file-based routing inside `src/routes/`.
+  - Inspect database schemas and Row Level Security (RLS) policies in `supabase/migrations/`.
+  - Run Playwright E2E tests using `npm run test:e2e`.
 
 ---
 
@@ -68,7 +147,56 @@
 
 ---
 
-## 🚀 System Topology & Event-Driven Architecture
+## 🗺️ Complete UI Route & Feature Map
+
+Here is an explicit map of every page and route built inside CanteenOS:
+
+### 🎓 Student Application (`/app`)
+- **`/`**: Marketing Landing Page with interactive 3D WebGL food showcase and features overview.
+- **`/app`**: Student Dashboard — Quick re-order carousel, temporal meal recommendation banner, active order tracker pill.
+- **`/app/menu`**: Full Food Menu Explorer — Category tabs, real-time search bar, dietary filter toggles (Veg/Non-Veg, Vegan, Calories), sorting by price & popularity.
+- **`/app/menu/$itemId`**: Dish Detail Screen — Calorie macros, preparation time estimate, special cooking notes, and quantity selector.
+- **`/app/cart`**: Shopping Cart Drawer & Page — Line item adjustments, coupon promo code redemption box, packaging fees calculation.
+- **`/app/checkout`**: Checkout Flow — Pickup vs. Delivery selector, campus canteen location picker, payment method selector (Wallet, Card, UPI, Cash).
+- **`/app/orders`**: Order History Hub — View active orders, past order receipts, re-order button.
+- **`/app/orders/$orderId`**: Order Tracking Timeline — Real-time progress bar (Placed ➔ Preparing ➔ Ready ➔ Completed), estimated ready timer, and animated **QR Pickup Pass**.
+- **`/app/favorites`**: Bookmarked Dishes Library.
+- **`/app/profile`**: Student Profile Hub — Student ID, department info, address book, wallet balance.
+- **`/app/ai`**: **Canteen AI Assistant** — Conversational meal finder, macro calorie advice, dietary recommendations.
+- **`/app/notifications`**: In-App Notification Center — Ready-for-pickup alerts and promotional announcements.
+- **`/app/settings`**: Preferences — Dark/Light theme, Motion Preference, GPU Performance Tier override.
+
+### 👨‍🍳 Kitchen Workspace (`/kitchen`)
+- **`/kitchen`**: **Kitchen Display System (KDS)** — Kanban columns (`New Orders`, `Preparing`, `Ready for Pickup`), station filters, SLA countdown timers, Web Audio chime alerts, QR camera scanner popup.
+- **`/kitchen/history`**: Completed Ticket History — Filter by date, search past order receipts, inspect preparation duration SLAs.
+- **`/kitchen/menu`**: Instant Menu Availability Toggles — Quickly toggle items "Out of Stock" or "Available" during busy shifts.
+- **`/kitchen/notifications`**: Kitchen Staff Alert Board.
+
+### 🛡️ Admin Management Suite (`/admin`)
+- **`/admin`**: Executive Overview — Real-time revenue stat cards, active order counter, sales trend graphs, recent order list.
+- **`/admin/analytics`**: Deep Analytics Hub — Sales breakdown, revenue projections, order volume heatmaps, top-selling items.
+- **`/admin/menu`**: Menu Management — Add/edit dishes, upload food images, set pricing, assign tags & prep times.
+- **`/admin/categories`**: Menu Category Manager — Sort orders, custom emojis, color tints, visibility toggles.
+- **`/admin/coupons`**: Discount Engine — Create promo codes, set percentage/flat discounts, usage limits, expiration dates.
+- **`/admin/inventory`**: Stock Control & Operations — Item SKU ledger, current stock levels, low-stock threshold alerts, supplier directory, purchase order logger.
+- **`/admin/customers`**: Customer CRM — Student order frequency, total spend, loyalty status.
+- **`/admin/staff`**: Staff Roster — Kitchen employee list, assigned roles, shift performance.
+- **`/admin/users`**: User Management — Full account lookup, account status controls, email verification status.
+- **`/admin/roles`**: Role-Based Access Control (RBAC) — Assign `student`, `kitchen`, or `admin` roles to user accounts.
+- **`/admin/approvals`**: Workflow Approval Engine — Multi-step managerial approvals for high-value purchase orders or inventory adjustments.
+- **`/admin/workforce`**: Rota Scheduling — Shift templates, weekly employee shift assignments, attendance logs.
+- **`/admin/organization`**: Enterprise Multi-Tenant Hierarchy — Multi-campus manager, branch canteen switcher, organization settings.
+- **`/admin/reports`**: Reports Library — Download CSV / Excel reports for financial auditing, inventory usage, and tax summaries.
+- **`/admin/audit`**: System Audit Log — Immutable event ledger tracking all admin actions, role changes, and inventory edits.
+- **`/admin/activity`**: Live Activity Stream — Real-time event log of platform usage.
+- **`/admin/notifications`**: Broadcast Broadcaster — Send instant banner announcements to all active student apps.
+- **`/admin/monitoring`**: Infrastructure Status — Real-time Web Vitals, database connection health, API latency metrics.
+- **`/admin/settings`**: Canteen Workspace Configuration — Tax rates, packaging fees, operating hours, currency formatting.
+- **`/admin/qa`**: Testing & Simulation Harness — Traffic burst generator, offline network flakiness tester, audio chime tester.
+
+---
+
+## 🏗️ System Topology & Event-Driven Architecture
 
 CanteenOS utilizes a decoupled, event-driven topology combining **TanStack Start** SSR at the edge with **Supabase Enterprise Postgres** and **WebSocket Realtime CDC** at the backend layer.
 
@@ -287,59 +415,11 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
 $$;
 ```
 
-### PostgreSQL Row Level Security (RLS) Policy Declarations
-
-```sql
--- Profiles: Students can only read/edit their own profile; Staff can read all profiles
-CREATE POLICY "profiles_select_own_or_staff" ON public.profiles 
-  FOR SELECT TO authenticated
-  USING (id = auth.uid() OR public.is_staff(auth.uid()));
-
--- Orders: Students can insert their own orders and read their own history
-CREATE POLICY "orders_insert_own" ON public.orders 
-  FOR INSERT TO authenticated
-  WITH CHECK (user_id = auth.uid());
-
-CREATE POLICY "orders_select_own_or_staff" ON public.orders 
-  FOR SELECT TO authenticated
-  USING (user_id = auth.uid() OR public.is_staff(auth.uid()));
-
--- Kitchen / Staff: Kitchen staff & admins can update order status
-CREATE POLICY "orders_update_staff" ON public.orders 
-  FOR UPDATE TO authenticated
-  USING (public.is_staff(auth.uid()))
-  WITH CHECK (public.is_staff(auth.uid()));
-```
-
 ---
 
 ## 🧠 On-Device Canteen AI Recommendation Engine
 
 Located at `src/lib/canteen-ai.ts`, **Canteen AI** is a zero-latency, deterministic recommendation engine running directly on the client. It synthesizes menu catalogues, user order history, category affinity scores, and temporal meal windows without requiring external API tokens or network latency.
-
-```
-                             +-----------------------------------+
-                             |     Canteen AI Engine Input       |
-                             +-----------------+-----------------+
-                                               |
-                                 +-------------+-------------+
-                                 |                           |
-                                 v                           v
-                      +--------------------+       +--------------------+
-                      | Temporal Meal      |       | Category Affinity  |
-                      | Window (Breakfast/ |       | Math & Velocity    |
-                      | Lunch/Snacks)      |       | Vectors            |
-                      +----------+---------+       +----------+---------+
-                                 |                           |
-                                 +-------------+-------------+
-                                               |
-                                               v
-                             +-----------------------------------+
-                             | Scored Meal Recommendation Set    |
-                             +-----------------------------------+
-```
-
-### Core Algorithmic Implementation (`src/lib/canteen-ai.ts`):
 
 ```typescript
 export function recommendFor(
@@ -383,7 +463,7 @@ export function recommendFor(
 
 ---
 
-## ⚡ Low-Level Code Internals & Engineering Highlights
+## ⚡ Low-Level Code Internals & Technical Highlights
 
 ### 1. Dynamic Hardware GPU Capability Tiering (`src/hooks/use-perf-tier.ts`)
 
@@ -421,36 +501,6 @@ graph TD
     G -- No --> F
 ```
 
-### 3. Client-Side Attempt Rate Limiter (`src/lib/rate-limit.ts`)
-
-Prevents auth token brute-forcing using client-side sliding window bucket algorithms:
-
-```typescript
-export function checkRateLimit(
-  action: string,
-  { limit = 5, windowMs = 60_000, blockMs = 60_000 }: RateLimitOptions = {},
-): RateLimitState {
-  const data = readStorage();
-  const now = Date.now();
-  const bucket = data[action] ?? { attempts: [], blockedUntil: 0 };
-
-  if (bucket.blockedUntil > now) {
-    return { blocked: true, retryAfter: Math.ceil((bucket.blockedUntil - now) / 1000), remaining: 0 };
-  }
-
-  bucket.attempts = bucket.attempts.filter((ts) => now - ts < windowMs);
-  if (bucket.attempts.length >= limit) {
-    bucket.blockedUntil = now + blockMs;
-    writeStorage(data);
-    return { blocked: true, retryAfter: Math.ceil(blockMs / 1000), remaining: 0 };
-  }
-
-  bucket.attempts.push(now);
-  writeStorage(data);
-  return { blocked: false, retryAfter: 0, remaining: limit - bucket.attempts.length };
-}
-```
-
 ---
 
 ## 📁 Complete Directory Blueprint & Codebase Tree
@@ -484,31 +534,9 @@ canteenos-kitchen-hub/
 │   ├── contexts/                 # React Context Providers (Cart, Audio, Theme)
 │   ├── data/                     # Seed datasets & offline mock fallbacks
 │   ├── hooks/                    # Custom React hooks
-│   │   ├── use-auth.tsx          # Supabase auth session hook
-│   │   ├── use-offline-queue.ts  # IndexedDB offline order queue sync listener
-│   │   ├── use-perf-tier.ts      # Hardware concurrency & memory tier detector
-│   │   └── use-pwa.ts            # Network connectivity status listener
 │   ├── integrations/             # Third-party SDK clients
-│   │   ├── lovable/              # Lovable cloud auth client
-│   │   └── supabase/             # Auto-generated database types & client instance
 │   ├── lib/                      # Core domain business logic
-│   │   ├── api.ts                # TanStack Query data hooks & REST/Realtime methods
-│   │   ├── canteen-ai.ts         # On-device AI recommendation math engine
-│   │   ├── offline-queue.ts      # Offline storage storage engine
-│   │   ├── permissions.ts        # RBAC role permissions evaluator
-│   │   ├── rate-limit.ts         # Attempt throttling sliding-window bucket engine
-│   │   └── validation.ts         # Zod schemas for form state & API contracts
 │   ├── routes/                   # TanStack Start file-based routing tree
-│   │   ├── __root.tsx            # Root HTML Document Shell & Providers
-│   │   ├── app.tsx               # Student layout wrapper
-│   │   ├── app.index.tsx         # Student home page
-│   │   ├── app.menu.index.tsx    # Menu item explorer
-│   │   ├── app.checkout.tsx      # Multi-step checkout & payment
-│   │   ├── app.orders.$orderId.tsx# Order tracking timeline & QR pass
-│   │   ├── kitchen.index.tsx     # Real-Time Kitchen Kanban KDS
-│   │   ├── admin.index.tsx       # Admin executive analytics dashboard
-│   │   ├── admin.inventory.tsx   # Stock tracking & purchase order ledger
-│   │   └── admin.monitoring.live.tsx# Production system status & health monitor
 │   ├── types/                    # Domain-wide TypeScript type definitions
 │   ├── router.tsx                # TanStack Router & Query Client configuration
 │   ├── server.ts                 # Nitro SSR entry point & security headers
@@ -516,7 +544,6 @@ canteenos-kitchen-hub/
 ├── supabase/                     # Supabase backend engine workspace
 │   └── migrations/               # SQL migrations (Tables, RLS, Security Definers)
 ├── tests/                        # Playwright E2E automation test suites
-│   └── e2e/                      # Playwright spec files
 ├── DEPLOYMENT.md                 # Multi-cloud deployment guide
 ├── netlify.toml                  # Netlify deployment configuration
 ├── package.json                  # Dependencies & execution scripts
@@ -534,11 +561,10 @@ canteenos-kitchen-hub/
 - **Node.js**: `v20.0.0` or higher
 - **Package Manager**: `npm` (v10+), `bun` (v1.1+), or `pnpm` (v9+)
 - **Git**: `v2.40+`
-- **Supabase CLI** *(Optional for local database development)*: `v1.150+`
 
 ---
 
-### Step-by-Step Installation
+### Step-by-Step Local Setup
 
 1. **Clone the Repository**:
    ```bash
@@ -552,85 +578,41 @@ canteenos-kitchen-hub/
    ```
 
 3. **Configure Environment Variables**:
-   Copy `.env.example` to create your local `.env` configuration file:
+   Copy `.env.example` to create `.env`:
    ```bash
    cp .env.example .env
    ```
 
-4. **Launch the Development Server**:
+4. **Launch Development Server**:
    ```bash
    npm run dev
    ```
-   Open **`http://localhost:3000`** in your web browser.
-
----
-
-### Environment Variables Master Reference
-
-| Variable | Required | Description |
-| :--- | :---: | :--- |
-| `VITE_SUPABASE_URL` | **Yes** | HTTPS URL of your Supabase project instance |
-| `VITE_SUPABASE_ANON_KEY` | **Yes** | Public Anonymous API key for Supabase client queries |
-| `SUPABASE_SERVICE_ROLE_KEY` | Optional | Secret Service Role key for administrative backend scripts |
-| `VITE_APP_TITLE` | Optional | Custom HTML header title string |
-| `VITE_ENABLE_AI` | Optional | Set to `true`/`false` to toggle the Canteen AI floating widget |
-| `VITE_ENABLE_PWA` | Optional | Set to `true`/`false` to toggle Service Worker registration |
-
----
-
-## 🗄️ Supabase Setup & Local Migrations
-
-To apply schema migrations to your Supabase project:
-
-1. **Link your Supabase Project**:
-   ```bash
-   npx supabase link --project-ref <your-project-id>
-   ```
-
-2. **Push Database Schema & RLS Policies**:
-   ```bash
-   npx supabase db push
-   ```
-
-3. **Generate TypeScript Database Definitions**:
-   ```bash
-   npx supabase gen types typescript --local > src/integrations/supabase/types.ts
-   ```
+   Navigate to **`http://localhost:3000`**.
 
 ---
 
 ## 🧪 Testing, QA & Load Simulation
 
-### Playwright E2E Automation Suites
-
 ```bash
-# Run headless E2E tests
+# Run headless E2E Playwright tests
 npm run test:e2e
 
-# Launch interactive UI mode
+# Launch interactive Playwright test runner UI
 npm run test:e2e:ui
 ```
-
-### Admin QA Lab (`/admin/qa`)
-Navigate to `/admin/qa` in the web application to access built-in QA utilities:
-- **Burst Order Simulator**: Generates 20+ real-time kitchen orders to test WebSocket handling.
-- **Network Flakiness Tester**: Mocks sudden offline transitions to verify PWA queue auto-flushing.
-- **Audio Synthesizer Tester**: Audits Web Audio API chime outputs across different browsers.
 
 ---
 
 ## 🚢 Multi-Cloud Production Deployment
 
-CanteenOS uses **Nitro** server engine underneath Vite, enabling multi-cloud deployments without code modifications.
-
 ```bash
-# Build for Vercel
+# Build for Vercel Serverless
 npm run build:vercel
 
-# Build for Netlify
+# Build for Netlify Edge Functions
 npm run build:netlify
 
-# Standard Node.js Production Build
+# Standard Node.js Container Build
 npm run build
 node .output/server/index.mjs
 ```

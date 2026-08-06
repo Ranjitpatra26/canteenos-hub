@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "buildCommand": "NITRO_PRESET=vercel npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": ".vercel/output",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -20,7 +20,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+          "value": "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()"
         },
         {
           "key": "Strict-Transport-Security",

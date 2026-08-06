@@ -607,7 +607,7 @@ export function Security() {
                       doc.text("3. IT & Security Contact", 20, 112);
                       doc.setFontSize(10);
                       doc.setTextColor(80);
-                      doc.text("• Lead Admin: Omkar Narsale (omkar.narsale24@sakec.ac.in)", 24, 120);
+                      doc.text("• Lead Admin: Ranjit Patra (ranjitpatra2611@gmail.com)", 24, 120);
 
                       doc.save("CanteenOS-Security-Compliance-Report.pdf");
                       toast.success("Security Overview PDF downloaded!");

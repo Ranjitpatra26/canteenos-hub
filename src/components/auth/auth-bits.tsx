@@ -9,16 +9,32 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
 
   const signIn = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/app`,
+      });
+      if (result.error) {
+        setLoading(false);
+        const errMsg = result.error.message || "Google sign-in failed";
+        if (errMsg.includes("provider is not enabled") || errMsg.includes("Unsupported provider")) {
+          toast.error("Google Auth Not Enabled in Supabase", {
+            description: "To enable Google Sign-In, turn on the Google provider in your Supabase Dashboard under Authentication -> Providers.",
+          });
+        } else {
+          toast.error("Google Sign-In Error", {
+            description: errMsg,
+          });
+        }
+        return;
+      }
+      if (result.redirected) return;
+      window.location.href = "/app";
+    } catch (err: any) {
       setLoading(false);
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
+      toast.error("Google Sign-In Failed", {
+        description: err?.message || "Please check your Supabase authentication configuration.",
+      });
     }
-    if (result.redirected) return;
-    window.location.href = "/app";
   };
 
   return (

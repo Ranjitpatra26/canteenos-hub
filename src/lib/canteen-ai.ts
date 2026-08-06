@@ -69,6 +69,59 @@ export function popularMeals(items: MenuItem[], limit = 6) {
     .slice(0, limit);
 }
 
+export function buildBudgetCombo(items: MenuItem[], maxBudget: number) {
+  const available = items.filter((i) => i.available && i.price <= maxBudget);
+  if (!available.length) return [];
+
+  let bestCombo: MenuItem[] = [];
+  let maxScore = -1;
+
+  for (let i = 0; i < available.length; i++) {
+    const item1 = available[i];
+    if (item1.price <= maxBudget) {
+      const score1 = item1.calories + item1.rating * 20;
+      if (score1 > maxScore) {
+        maxScore = score1;
+        bestCombo = [item1];
+      }
+    }
+
+    for (let j = i + 1; j < available.length; j++) {
+      const item2 = available[j];
+      const totalPrice = item1.price + item2.price;
+      if (totalPrice <= maxBudget) {
+        const score2 = item1.calories + item2.calories + (item1.rating + item2.rating) * 15;
+        if (score2 > maxScore) {
+          maxScore = score2;
+          bestCombo = [item1, item2];
+        }
+      }
+    }
+  }
+
+  return bestCombo;
+}
+
+export function predictQueueWait(orders: Order[]) {
+  const activeOrders = orders.filter((o) => ["placed", "preparing"].includes(o.status));
+  const count = activeOrders.length;
+  const avgPrep = 8; // mins
+  const estimatedWait = Math.max(4, Math.round(count * 2.5 + avgPrep));
+
+  let status: "fast" | "moderate" | "busy" = "fast";
+  let advice = "Kitchen fast lane open! Order now for instant pickup.";
+
+  if (count > 5) {
+    status = "busy";
+    advice = "Peak lunch rush! Order now to skip the 15+ minute queue.";
+  } else if (count > 2) {
+    status = "moderate";
+    advice = "Moderate kitchen activity. Prep time is ~8-10 minutes.";
+  }
+
+  return { activeOrdersCount: count, estimatedWaitMins: estimatedWait, status, advice };
+}
+
 /** Personalised recommendations blending taste history, time of day and ratings. */
 export function recommendFor(
   items: MenuItem[],
@@ -252,11 +305,11 @@ export const AI_FAQ: Array<{ q: string; a: string; keys: string[] }> = [
 ];
 
 export const AI_STARTERS = [
+  "High protein gym options 🥩",
+  "Low calorie fat loss picks 🥗",
+  "Generate a 3-day student diet plan 🗓️",
   "What should I eat right now?",
   "Show me something light and vegetarian",
-  "What's trending this week?",
-  "How much have I spent this month?",
-  "How do I collect my order?",
 ];
 
 export function answerQuestion(
@@ -312,6 +365,25 @@ export function answerQuestion(
       .map((s) => s.item)
       .sort((a, b) => a.calories - b.calories);
     return reply("Lighter vegetarian picks, sorted by calories:", { items: picks });
+  }
+
+  // Protein / Gym / Fitness
+  if (/(protein|gym|workout|bulk|gain|muscle|macro|fit|diet plan)/.test(q)) {
+    const picks = ctx.items
+      .filter(
+        (i) =>
+          i.available &&
+          (i.tags.some((t) => /protein|gym|paneer|egg|chicken|chole|shake/i.test(t)) ||
+            /paneer|egg|chole|dal|shake|milk|sprouts|curd/i.test(i.name)),
+      )
+      .slice(0, 4);
+    return reply(
+      "Here are the top high-protein canteen options to hit your daily fitness targets 💪:",
+      {
+        items: picks.length ? picks : ctx.items.slice(0, 3),
+        chips: ["High protein gym options 🥩", "Generate a 3-day student diet plan 🗓️"],
+      },
+    );
   }
 
   // Cheap

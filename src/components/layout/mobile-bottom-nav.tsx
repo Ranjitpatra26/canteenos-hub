@@ -44,10 +44,10 @@ export function MobileBottomNav({ items, showCart }: { items: NavItem[]; showCar
                     transition={{ type: "spring", stiffness: 420, damping: 34 }}
                   />
                 ) : null}
-                <span className="relative">
+                <span className="relative overflow-visible">
                   <item.icon className="size-[20px]" />
                   {badge > 0 ? (
-                    <span className="absolute -right-2 -top-1.5 grid size-4 place-items-center rounded-full bg-primary text-[9px] font-semibold text-primary-foreground">
+                    <span className="absolute -right-2 -top-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-black leading-none text-primary-foreground shadow-lg ring-2 ring-background z-30">
                       {badge}
                     </span>
                   ) : null}

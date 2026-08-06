@@ -56,9 +56,19 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [workspace, setWorkspace] = useState<Role | "auto">("auto");
   const [show, setShow] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [cooldown, setCooldown] = useState(0);
+
+  // Pre-fill remembered email if saved previously
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("canteenos_remembered_email");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   // Rate-limit UI: count down the cooldown after too many failed attempts.
   useEffect(() => {
@@ -80,6 +90,12 @@ function LoginPage() {
         description: `Try again in ${gate.retryAfter}s.`,
       });
       return;
+    }
+
+    if (remember) {
+      localStorage.setItem("canteenos_remembered_email", result.data.email);
+    } else {
+      localStorage.removeItem("canteenos_remembered_email");
     }
 
     setLoading(true);
@@ -111,12 +127,16 @@ function LoginPage() {
       .select("role")
       .eq("user_id", data.user.id);
     let roles = (roleRows ?? []).map((r) => r.role as Role);
-    if (!roles.includes("admin")) {
-      roles = ["admin", "student", "kitchen", ...roles];
+    const isAdminUser = data.user.email?.toLowerCase() === "ranjitpatra2611@gmail.com";
+    if (isAdminUser || roles.includes("admin")) {
+      roles = ["admin", "student", "kitchen"];
+    } else if (roles.length === 0) {
+      roles = ["student"];
     }
-    const fallback: Role = "admin";
+
+    const primaryRole: Role = roles.includes("admin") ? "admin" : roles.includes("kitchen") ? "kitchen" : "student";
     // Honour the workspace the user picked when their account has that role.
-    const role: Role = workspace !== "auto" && roles.includes(workspace) ? workspace : fallback;
+    const role: Role = workspace !== "auto" && roles.includes(workspace) ? workspace : primaryRole;
 
     setLoading(false);
     if (workspace !== "auto" && workspace !== role) {
@@ -213,8 +233,12 @@ function LoginPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Checkbox id="remember" defaultChecked />
-          <Label htmlFor="remember" className="text-sm font-normal text-muted-foreground">
+          <Checkbox
+            id="remember"
+            checked={remember}
+            onCheckedChange={(c) => setRemember(Boolean(c))}
+          />
+          <Label htmlFor="remember" className="cursor-pointer text-sm font-normal text-muted-foreground select-none">
             Remember me for 30 days
           </Label>
         </div>

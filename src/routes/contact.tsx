@@ -74,7 +74,7 @@ function ContactPage() {
       doc.text("3. Management & IT Contact", 20, 124);
       doc.setFontSize(10);
       doc.setTextColor(80);
-      doc.text("• Lead Administrator: Omkar Narsale (omkar.narsale24@sakec.ac.in)", 24, 132);
+      doc.text("• Lead Administrator: Ranjit Patra (ranjitpatra2611@gmail.com)", 24, 132);
       doc.text("• IT Desk: sales@canteenos.com · +91 (022) 2854-9000", 24, 139);
 
       doc.save("CanteenOS-Security-Compliance-Report.pdf");
@@ -91,7 +91,7 @@ function ContactPage() {
       return;
     }
     setSubmitted(true);
-    toast.success("Inquiry sent to Admin Omkar Narsale! We will reach out within 24 hours.");
+    toast.success("Inquiry sent to Admin Ranjit Patra! We will reach out within 24 hours.");
   };
 
   return (
@@ -134,12 +134,12 @@ function ContactPage() {
                   </span>
                   <div>
                     <p className="font-semibold text-foreground">Lead Admin & Manager</p>
-                    <p className="text-muted-foreground">Omkar Narsale</p>
+                    <p className="text-muted-foreground">Ranjit Patra</p>
                     <a
-                      href="mailto:omkar.narsale24@sakec.ac.in"
+                      href="mailto:ranjitpatra2611@gmail.com"
                       className="text-primary font-medium hover:underline block mt-0.5"
                     >
-                      omkar.narsale24@sakec.ac.in
+                      ranjitpatra2611@gmail.com
                     </a>
                   </div>
                 </div>
@@ -206,7 +206,7 @@ function ContactPage() {
                   </div>
                   <h2 className="text-2xl font-bold">Inquiry Submitted!</h2>
                   <p className="text-xs text-muted-foreground max-w-md mx-auto">
-                    Thank you, <strong className="text-foreground">{name}</strong>. Your message regarding <strong className="text-foreground">{subject}</strong> has been assigned to Admin Omkar Narsale.
+                    Thank you, <strong className="text-foreground">{name}</strong>. Your message regarding <strong className="text-foreground">{subject}</strong> has been assigned to Admin Ranjit Patra.
                   </p>
                   <Button
                     variant="outline"
@@ -268,6 +268,7 @@ function ContactPage() {
                         onChange={(e) => setSubject(e.target.value)}
                         className="w-full h-10 rounded-xl border border-input bg-background px-3 text-xs focus:outline-none focus:ring-2 focus:ring-ring"
                       >
+                        <option value="Password Reset & Account Assistance">Password Reset & Account Assistance</option>
                         <option value="Sales & Pricing Inquiry">Sales & Pricing Inquiry</option>
                         <option value="IT & Security Compliance">IT & Security Compliance</option>
                         <option value="Plan Upgrade & Billing">Plan Upgrade & Billing</option>

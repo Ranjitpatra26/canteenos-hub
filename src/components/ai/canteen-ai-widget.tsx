@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Bot, CornerDownLeft, Plus, Sparkles, X } from "lucide-react";
+import { Bot, CornerDownLeft, Mic, MicOff, Plus, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,8 +14,6 @@ import {
   AI_STARTERS,
   answerQuestion,
   askGrokAi,
-  getGrokApiKey,
-  setGrokApiKey,
   type AiChatMessage,
 } from "@/lib/canteen-ai";
 import type { MenuItem } from "@/types";
@@ -121,6 +119,8 @@ export function CanteenAiWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [listening, setListening] = useState(false);
+
   const { data: items = [] } = useMenuItems();
   const { data: orders = [] } = useMyOrders();
   const { favorites, add } = useCart();
@@ -132,7 +132,7 @@ export function CanteenAiWidget() {
     {
       id: "welcome",
       role: "assistant",
-      text: "Hi! I'm **Canteen AI**. I can recommend dishes, explain your order history or answer canteen questions.",
+      text: "Hi! I'm **Canteen AI**. I can recommend high-protein gym picks 🥩, calculate your daily macros 📊, or take voice orders 🎙️!",
       chips: AI_STARTERS.slice(0, 3),
     },
   ]);
@@ -155,6 +155,16 @@ export function CanteenAiWidget() {
     setMessages(nextHistory);
     setInput("");
     setThinking(true);
+
+    // Auto-detect voice order commands e.g. "add paneer" or "order chai"
+    const matchedItem = items.find((i) =>
+      clean.toLowerCase().includes(i.name.toLowerCase()),
+    );
+    if (/add|order|buy|want/i.test(clean) && matchedItem) {
+      add(matchedItem.id, 1);
+      toast.success(`Voice Order: ${matchedItem.name} added to cart! 🛒`);
+    }
+
     try {
       const response = await askGrokAi(clean, ctx, nextHistory);
       setMessages((m) => [...m, response]);
@@ -162,6 +172,78 @@ export function CanteenAiWidget() {
       setMessages((m) => [...m, answerQuestion(clean, ctx)]);
     } finally {
       setThinking(false);
+    }
+  }
+
+  const recognitionRef = useRef<any>(null);
+
+  function startVoiceRecognition() {
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setListening(false);
+      return;
+    }
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      toast.error("Voice ordering requires Chrome, Edge, Safari, or Brave.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition.lang = "en-US";
+      recognition.interimResults = true;
+      recognition.continuous = false;
+
+      let finalTranscript = "";
+
+      recognition.onstart = () => {
+        setListening(true);
+        toast.info("Listening... Speak your order! 🎙️");
+      };
+
+      recognition.onresult = (e: any) => {
+        let currentText = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const text = e.results[i][0].transcript;
+          if (e.results[i].isFinal) {
+            finalTranscript += text;
+          } else {
+            currentText += text;
+          }
+        }
+        const textToDisplay = finalTranscript || currentText;
+        if (textToDisplay) {
+          setInput(textToDisplay);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        setListening(false);
+        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+          toast.error("Microphone blocked! Click 🔒 next to localhost:8080 in address bar to allow mic access.");
+        } else if (event.error === "no-speech") {
+          toast.info("No speech heard. Click mic and try speaking your order!");
+        } else if (event.error !== "aborted") {
+          toast.error("Could not catch voice. Please try speaking again!");
+        }
+      };
+
+      recognition.onend = () => {
+        setListening(false);
+        if (finalTranscript.trim()) {
+          send(finalTranscript.trim());
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      setListening(false);
+      toast.error("Could not start microphone. Check browser permissions!");
     }
   }
 
@@ -215,11 +297,11 @@ export function CanteenAiWidget() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">Canteen AI</p>
                 <p className="truncate text-[11px] text-muted-foreground">
-                  Recommendations · insights · FAQ
+                  Picks · protein & gym macros · voice ordering 🎙️
                 </p>
               </div>
               <Badge variant="outline" className="rounded-full text-[10px]">
-                Beta
+                Grok AI
               </Badge>
             </header>
 
@@ -254,11 +336,23 @@ export function CanteenAiWidget() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Canteen AI…"
+                placeholder={listening ? "Listening..." : "Ask or speak to order..."}
                 aria-label="Message Canteen AI"
                 className="rounded-xl"
                 autoFocus
               />
+
+              <Button
+                type="button"
+                variant={listening ? "default" : "outline"}
+                size="icon"
+                className="shrink-0 rounded-xl"
+                aria-label="Voice command"
+                onClick={startVoiceRecognition}
+              >
+                {listening ? <Mic className="size-4 animate-bounce text-red-500" /> : <Mic className="size-4" />}
+              </Button>
+
               <Button
                 type="submit"
                 size="icon"

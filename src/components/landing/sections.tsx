@@ -694,7 +694,7 @@ export function CtaContact() {
       return;
     }
     toast.success(
-      "Sandbox request sent successfully! Owner Omkar Narsale (omkar.narsale24@sakec.ac.in) will connect with you within 48 hours.",
+      "Sandbox request sent successfully! Owner Ranjit Patra (ranjitpatra2611@gmail.com) will connect with you within 48 hours.",
       { duration: 6000 }
     );
     setName("");

@@ -4,6 +4,7 @@ import {
   BellRing,
   CheckCircle2,
   CreditCard,
+  Megaphone,
   PackageCheck,
   PackageX,
   Receipt,
@@ -14,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import type { AppNotification } from "@/types";
 
-export type NotificationTone = "order" | "ready" | "stock" | "payment" | "offer" | "system";
+export type NotificationTone = "order" | "ready" | "stock" | "payment" | "offer" | "announcement" | "system";
 
 const TONES: Record<
   NotificationTone,
@@ -29,18 +30,20 @@ const TONES: Record<
   },
   payment: { icon: CreditCard, label: "Payment", className: "bg-emerald-500/12 text-emerald-500" },
   offer: { icon: Sparkles, label: "Coupon", className: "bg-amber-500/12 text-amber-500" },
+  announcement: { icon: Megaphone, label: "Announcement", className: "bg-primary/15 text-primary" },
   system: { icon: Wrench, label: "System", className: "bg-muted text-muted-foreground" },
 };
 
 /** Maps the stored notification kind + copy onto a richer visual tone. */
-export function toneFor(n: Pick<AppNotification, "kind" | "title">): NotificationTone {
-  const t = n.title.toLowerCase();
+export function toneFor(n: Pick<AppNotification, "kind" | "title"> & { body?: string }): NotificationTone {
+  const t = `${n.title} ${n.body ?? ""}`.toLowerCase();
   if (n.kind === "stock") return "stock";
-  if (n.kind === "offer") return "offer";
-  if (n.kind === "system") return "system";
+  if (n.kind === "announcement") return "announcement";
+  if (n.kind === "offer" && (t.includes("coupon") || t.includes("discount") || t.includes("% off") || t.includes("promo"))) return "offer";
+  if (n.kind === "system" && !t.includes("announcement")) return "system";
   if (t.includes("ready") || t.includes("collect")) return "ready";
   if (t.includes("payment") || t.includes("paid") || t.includes("refund")) return "payment";
-  return "order";
+  return "announcement";
 }
 
 function NotificationCardBase({

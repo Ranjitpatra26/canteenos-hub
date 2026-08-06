@@ -118,6 +118,17 @@ function ForgotPasswordPage() {
             {loading ? <Loader2 className="size-4 animate-spin" /> : null}
             Send reset link
           </Button>
+
+          <div className="mt-4 rounded-2xl border border-border bg-card/60 p-4 text-center text-xs text-muted-foreground shadow-sm">
+            <p className="font-medium text-foreground">Forgot email or having technical issues?</p>
+            <p className="mt-1">
+              Reach out directly to Lead Admin <strong>Ranjit Patra</strong> via the{" "}
+              <Link to="/contact" className="font-semibold text-primary underline underline-offset-2 hover:text-primary/80">
+                Contact & IT Support Hub
+              </Link>{" "}
+              to reset your password in the database.
+            </p>
+          </div>
         </form>
       )}
     </AuthLayout>

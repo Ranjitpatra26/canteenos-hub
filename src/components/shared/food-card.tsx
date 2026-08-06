@@ -12,6 +12,19 @@ import { foodImage } from "@/lib/food-images";
 import { flyToCart } from "@/lib/fx";
 import type { MenuItem } from "@/types";
 
+export function estimateProtein(item: MenuItem): number {
+  const name = item.name.toLowerCase();
+  const tags = item.tags.map((t) => t.toLowerCase());
+  if (name.includes("paneer") || tags.includes("paneer")) return 26;
+  if (name.includes("egg") || tags.includes("egg")) return 22;
+  if (name.includes("chicken") || tags.includes("chicken")) return 32;
+  if (name.includes("chole") || name.includes("rajma") || name.includes("dal")) return 18;
+  if (name.includes("shake") || name.includes("milk") || name.includes("curd")) return 14;
+  if (name.includes("sprouts") || name.includes("salad")) return 12;
+  if (item.veg) return 8;
+  return 12;
+}
+
 function FoodCardBase({
   item,
   onAdd,
@@ -26,6 +39,7 @@ function FoodCardBase({
   index?: number;
 }) {
   const emojiRef = useRef<HTMLSpanElement>(null);
+  const protein = estimateProtein(item);
 
   function handleAdd() {
     flyToCart(emojiRef.current, item.emoji);
@@ -64,7 +78,7 @@ function FoodCardBase({
               {item.emoji}
             </span>
 
-            <div className="absolute left-3 top-3 flex gap-1.5 [transform:translateZ(28px)]">
+            <div className="absolute left-3 top-3 flex flex-wrap gap-1.5 [transform:translateZ(28px)]">
               <Badge
                 variant="outline"
                 className="rounded-full border-border/60 bg-background/70 text-[11px] backdrop-blur"
@@ -76,6 +90,12 @@ function FoodCardBase({
                   )}
                 />
                 {item.veg ? "Veg" : "Non-veg"}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="rounded-full border-primary/40 bg-primary/20 font-bold text-primary text-[11px] backdrop-blur shadow-sm"
+              >
+                💪 {protein}g Protein
               </Badge>
               {!item.available ? (
                 <Badge
@@ -114,16 +134,17 @@ function FoodCardBase({
               ) : null}
             </div>
 
-            <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1 text-foreground">
+            <div className="mt-3 flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1 font-medium text-foreground">
                 <Star className="size-3.5 fill-primary text-primary" />
                 {item.rating}
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="size-3.5" />
-                {item.prepTimeMins} min
+                {item.prepTimeMins}m
               </span>
-              <span>{item.calories} kcal</span>
+              <span>{item.calories} cal</span>
+              <span className="font-semibold text-primary">· 💪 {protein}g protein</span>
             </div>
 
             <div className="mt-auto flex items-center justify-between gap-2 pt-4">

@@ -122,6 +122,6 @@ export interface AppNotification {
   title: string;
   body: string;
   time: string;
-  kind: "order" | "system" | "offer" | "stock";
+  kind: "order" | "system" | "offer" | "stock" | "announcement";
   read: boolean;
 }

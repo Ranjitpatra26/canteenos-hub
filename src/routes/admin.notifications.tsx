@@ -78,7 +78,7 @@ function NotificationsPage() {
     setNotices([newNotice, ...notices]);
 
     broadcast.mutate(
-      { title: title.trim(), body: body.trim(), kind: "offer" },
+      { title: title.trim(), body: body.trim(), kind: "announcement" },
       {
         onSuccess: () => {
           toast.success("Announcement broadcasted!", {

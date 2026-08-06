@@ -147,8 +147,11 @@ function ItemDetail() {
               <Clock className="size-4" /> {item.prepTimeMins} min
             </span>
             <span className="flex items-center gap-1">
-              <Flame className="size-4" /> {item.calories} kcal
+              <Flame className="size-4 text-amber-400" /> {item.calories} kcal
             </span>
+            <Badge variant="outline" className="rounded-full border-primary/40 bg-primary/10 font-bold text-primary text-xs">
+              💪 {item.veg ? 16 : 28}g Protein per serving
+            </Badge>
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item.description}</p>

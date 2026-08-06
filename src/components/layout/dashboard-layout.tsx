@@ -296,11 +296,11 @@ export function DashboardLayout({
             </Button>
 
             {showCart ? (
-              <Button variant="ghost" size="icon" asChild aria-label="Cart">
-                <Link to="/app/cart" className="relative" data-cart-target>
+              <Button variant="ghost" size="icon" className="overflow-visible" asChild aria-label="Cart">
+                <Link to="/app/cart" className="relative flex items-center justify-center overflow-visible" data-cart-target>
                   <ShoppingBag className="size-5" />
                   {count > 0 ? (
-                    <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                    <span className="absolute -right-2 -top-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-black leading-none text-primary-foreground shadow-lg ring-2 ring-background z-30">
                       {count}
                     </span>
                   ) : null}

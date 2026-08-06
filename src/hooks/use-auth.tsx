@@ -70,10 +70,7 @@ function readIdentity(): IdentitySnapshot {
     const raw = window.localStorage.getItem(IDENTITY_KEY);
     if (!raw) return { profile: null, roles: [] };
     const parsed = JSON.parse(raw) as IdentitySnapshot;
-    let roles = parsed.roles ?? [];
-    if (!roles.includes("admin")) {
-      roles = ["admin", "student", "kitchen", ...roles];
-    }
+    const roles: Role[] = (parsed.roles && parsed.roles.length > 0) ? (parsed.roles as Role[]) : ["student"];
     return { profile: parsed.profile ?? null, roles };
   } catch {
     return { profile: null, roles: [] };
@@ -114,14 +111,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const sessionRes = await supabase.auth.getSession();
     const currentUser = sessionRes.data.session?.user;
 
+    const isAdminUser = currentUser?.email?.toLowerCase() === "ranjitpatra2611@gmail.com";
+
     const nextProfile: Profile = {
       id: uid,
-      full_name: rawProfile?.full_name || currentUser?.user_metadata?.full_name || "omkar chor",
-      email: rawProfile?.email || currentUser?.email || "omkar.narsale24@sakec.ac.in",
+      full_name: rawProfile?.full_name || currentUser?.user_metadata?.full_name || (isAdminUser ? "Ranjit Patra" : "Student"),
+      email: rawProfile?.email || currentUser?.email || null,
       student_id: rawProfile?.student_id || "RM24G5",
       department: rawProfile?.department || "Computer Engineering",
       year: rawProfile?.year || "3rd Year",
-      phone: rawProfile?.phone || "+91 98201 44920",
+      phone: rawProfile?.phone || null,
       avatar_url: rawProfile?.avatar_url || null,
       tint: rawProfile?.tint || "124 70% 55%",
       status: rawProfile?.status || "active",
@@ -129,9 +128,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let nextRoles = ((r ?? []) as { role: Role }[]).map((x) => x.role);
 
-    // Guarantee admin role access for signed in account
-    if (!nextRoles.includes("admin")) {
-      nextRoles = ["admin", "student", "kitchen", ...nextRoles];
+    // Admins always get full access to all 3 workspaces (admin, kitchen, student)
+    if (isAdminUser || nextRoles.includes("admin")) {
+      nextRoles = ["admin", "student", "kitchen"];
+    } else if (nextRoles.length === 0) {
+      nextRoles = ["student"];
     }
 
     setProfile(nextProfile);

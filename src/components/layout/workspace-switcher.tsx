@@ -75,8 +75,11 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
       .select("role")
       .eq("user_id", data.user.id);
     let nextRoles = (roleRows ?? []).map((r) => r.role as Role);
-    if (!nextRoles.includes("admin")) {
-      nextRoles = ["admin", "student", "kitchen", ...nextRoles];
+    const isAdminUser = data.user.email?.toLowerCase() === "ranjitpatra2611@gmail.com";
+    if (isAdminUser || nextRoles.includes("admin")) {
+      nextRoles = ["admin", "student", "kitchen"];
+    } else if (nextRoles.length === 0) {
+      nextRoles = ["student"];
     }
     setLoading(false);
     if (!nextRoles.includes(target.role)) {

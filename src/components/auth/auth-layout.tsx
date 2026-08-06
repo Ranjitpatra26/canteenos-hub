@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ChefHat, Quote, UtensilsCrossed, Coffee, Soup, Croissant } from "lucide-react";
 import { AccentCanvas } from "@/components/three/accent-canvas";
+import { FloatingFoodFX } from "@/components/auth/floating-food-fx";
 
 export function AuthLayout({
   title,
@@ -16,7 +17,8 @@ export function AuthLayout({
   footer?: ReactNode;
 }) {
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
+    <div className="relative grid min-h-dvh overflow-hidden lg:grid-cols-2">
+      <FloatingFoodFX />
       <div className="aurora relative hidden flex-col justify-between overflow-hidden border-r border-border bg-card/40 p-12 lg:flex">
         {/* large ambient glow behind the brand mark */}
         <div className="pointer-events-none absolute -left-24 -top-24 size-[28rem] rounded-full bg-primary/10 blur-[120px]" />

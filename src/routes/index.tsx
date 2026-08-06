@@ -36,7 +36,11 @@ const organizationLd = {
   description: "Smart canteen ordering, kitchen operations and analytics for modern campuses.",
   url: "/",
   logo: "/favicon.png",
-  sameAs: ["https://github.com", "https://twitter.com", "https://linkedin.com"],
+  sameAs: [
+    "https://github.com/Ranjitpatra26",
+    "https://www.linkedin.com/in/ranjit-patra-b27816393",
+    "https://x.com"
+  ],
 };
 
 const softwareLd = {

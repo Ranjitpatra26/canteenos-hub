@@ -848,15 +848,33 @@ export function Footer() {
             Smart canteen ordering, kitchen operations and analytics for modern campuses.
           </p>
           <div className="mt-5 flex gap-2">
-            {[Twitter, Github, Linkedin].map((Icon, i) => (
-              <span
-                key={i}
-                aria-hidden
-                className="grid size-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:text-primary"
-              >
-                <Icon className="size-4" />
-              </span>
-            ))}
+            <a
+              href="https://x.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter X"
+              className="grid size-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            >
+              <Twitter className="size-4" />
+            </a>
+            <a
+              href="https://github.com/Ranjitpatra26"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub — Ranjit Patra"
+              className="grid size-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            >
+              <Github className="size-4" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/ranjit-patra-b27816393"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn — Ranjit Patra"
+              className="grid size-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            >
+              <Linkedin className="size-4" />
+            </a>
           </div>
         </div>
         {cols.map((col) => (

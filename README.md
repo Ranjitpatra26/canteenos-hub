@@ -14,16 +14,17 @@
 
 **Order Ahead • Skip the Queue • Live Kitchen Kanban • Voice Ordering 🎙️ • Student Fitness & Protein Companion 🥩 • Dynamic QR Pickup**
 
-[![Lead Developer: Ranjit Patra](https://img.shields.io/badge/Developer-Ranjit_Patra-10B981?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ranjit-patra-b27816393)
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Ranjitpatra26%2Fcanteenos--hub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ranjitpatra26/canteenos-hub.git)
+[![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-Ranjit_Patra-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ranjit-patra-b27816393)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-Ranjitpatra26-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ranjitpatra26)
+[![GitHub Repository](https://img.shields.io/badge/Repository-canteenos--hub-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ranjitpatra26/canteenos-hub.git)
 [![TypeScript 5.8](https://img.shields.io/badge/TypeScript-5.8_Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Supabase Postgres](https://img.shields.io/badge/Supabase-Postgres_%2B_Realtime_CDC-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Supabase Postgres](https://img.shields.io/badge/Supabase-Postgres_%2B_Realtime-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.2-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Grok 2 AI Engine](https://img.shields.io/badge/Canteen_AI-Grok_2_%2B_Voice_Commands-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-on-device--grok-canteen-ai-engine)
+[![Grok 2 AI Engine](https://img.shields.io/badge/Canteen_AI-Grok_2_%2B_Voice_Commands-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-voice-command-ordering--ai-features)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[🌟 Plain-English Overview](#-plain-english-executive-overview) · [👥 User Role Guides](#-quick-start-by-user-role) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Student Fitness Companion](#-student-fitness-protein--gym-companion) · [🏗️ System Topology](#-system-topology--event-driven-architecture) · [📊 Database ERD](#-database-schema--entity-relationship-diagram-erd) · [⚡ Developer Setup](#-developer-setup--getting-started)
+[🌟 Overview](#-plain-english-executive-overview) · [👤 Owner Links](#-maintainer--owner-information) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Fitness & Protein](#-student-fitness-protein--gym-companion) · [🖼️ Visual Showcase](#-system-visual-showcase) · [🏗️ Architecture](#-system-topology--event-driven-architecture) · [⚡ Setup](#-developer-setup--getting-started)
 
 </div>
 
@@ -61,15 +62,15 @@ Just like Uber Eats lets you order food on your phone, CanteenOS lets students a
 4. 👨‍🍳 **No More Blind Kitchen Rushes**: Kitchen staff see incoming tickets automatically organized by station (Grill, Beverages, Hot Food) on a real-time Kanban prep board.
 5. 📊 **No More Lost Revenue or Food Waste**: Canteen owners get real-time analytics on daily revenue, peak order hours, raw material stock, and staff shifts.
 
----
-
 ## 👤 Maintainer & Owner Information
 
-- **Lead Architect & Developer:** **Ranjit Patra**
-- **Email:** `ranjitpatra2611@gmail.com`
-- **GitHub Profile:** [github.com/Ranjitpatra26](https://github.com/Ranjitpatra26)
-- **LinkedIn Profile:** [linkedin.com/in/ranjit-patra-b27816393](https://www.linkedin.com/in/ranjit-patra-b27816393)
-- **Official GitHub Repository:** [Ranjitpatra26/canteenos-hub](https://github.com/Ranjitpatra26/canteenos-hub.git)
+| Role / Contact | Details & Direct Redirect Links |
+| :--- | :--- |
+| **Lead Developer & Creator** | **Ranjit Patra** |
+| **Email Address** | [`ranjitpatra2611@gmail.com`](mailto:ranjitpatra2611@gmail.com) |
+| **LinkedIn Profile** | 👔 [www.linkedin.com/in/ranjit-patra-b27816393](https://www.linkedin.com/in/ranjit-patra-b27816393) |
+| **GitHub Profile** | 🐙 [github.com/Ranjitpatra26](https://github.com/Ranjitpatra26) |
+| **GitHub Repository** | 📦 [github.com/Ranjitpatra26/canteenos-hub](https://github.com/Ranjitpatra26/canteenos-hub.git) |
 
 ---
 

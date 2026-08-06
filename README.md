@@ -116,6 +116,24 @@ Designed specifically for campus gym-goers and fitness-conscious students:
 
 ---
 
+## 🖼️ System Visual Showcase
+
+<div align="center">
+
+| 🎓 Student 3D Hub & Ordering Pass | 👨‍🍳 Real-Time Kitchen Kanban KDS |
+| :---: | :---: |
+| ![Student 3D App](docs/images/hero-banner.png) | ![Kitchen Kanban KDS](docs/images/kitchen-kanban.png) |
+| *React Three Fiber 3D hero scene & QR pickup pass* | *Station-filtered preparation board with SLA countdowns* |
+
+| 🤖 On-Device Canteen AI Engine | 🛡️ Executive Admin Command Center |
+| :---: | :---: |
+| ![Canteen AI Engine](docs/images/canteen-ai.png) | ![Admin Analytics](docs/images/admin-analytics.png) |
+| *Temporal window scoring & macro nutritional calculator* | *Real-time financial charts, stock movement & health monitors* |
+
+</div>
+
+---
+
 ## 👥 Quick-Start Guide by User Role
 
 ### 🎓 1. For Students & Customers
@@ -171,6 +189,8 @@ Designed specifically for campus gym-goers and fitness-conscious students:
 ## 🏗️ System Topology & Event-Driven Architecture
 
 CanteenOS utilizes a decoupled, event-driven topology combining **TanStack Start** SSR at the edge with **Supabase Enterprise Postgres** and **WebSocket Realtime CDC** at the backend layer.
+
+![CanteenOS Architecture Topology](docs/images/system-architecture.png)
 
 ```
                                   +---------------------------------------+

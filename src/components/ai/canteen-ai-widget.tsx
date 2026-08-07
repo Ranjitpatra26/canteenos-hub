@@ -262,7 +262,7 @@ export function CanteenAiWidget() {
         aria-label={open ? "Close Canteen AI" : "Open Canteen AI assistant"}
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
-        className="fixed bottom-5 right-5 z-40 grid size-13 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="fixed bottom-20 right-5 z-40 grid size-13 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:bottom-5"
         style={{ width: 52, height: 52 }}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -290,7 +290,7 @@ export function CanteenAiWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-24 right-5 z-40 flex h-[min(560px,75vh)] w-[min(384px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-3xl border border-border bg-background/90 shadow-2xl backdrop-blur-xl"
+            className="fixed bottom-36 right-5 z-40 flex h-[min(560px,75vh)] w-[min(384px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-3xl border border-border bg-background/90 shadow-2xl backdrop-blur-xl lg:bottom-24"
           >
             <header className="flex items-center gap-3 border-b border-border px-4 py-3">
               <span className="grid size-9 place-items-center rounded-xl bg-primary/15 text-primary">

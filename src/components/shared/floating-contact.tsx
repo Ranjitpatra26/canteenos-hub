@@ -14,7 +14,7 @@ export function FloatingContactSymbol() {
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="fixed bottom-5 left-5 z-50 select-none"
+      className="fixed bottom-20 left-5 z-50 select-none lg:bottom-5"
     >
       <Link
         to="/contact"

@@ -283,7 +283,7 @@ export function FeatureComparison() {
         </motion.div>
 
         <motion.div {...fadeUp} className="mt-12 overflow-hidden surface-card">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto [webkit-overflow-scrolling:touch]">
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <caption className="sr-only">
                 Feature comparison between CanteenOS, a generic point of sale and manual token

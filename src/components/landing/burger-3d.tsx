@@ -192,9 +192,39 @@ export function Burger3D() {
       targetRotY = 0;
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      isHovering = true;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = container.getBoundingClientRect();
+      const normX = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      const normY = ((touch.clientY - rect.top) / rect.height) * 2 - 1;
+      targetRotY = normX * 1.2;
+      targetRotX = normY * 0.9;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = container.getBoundingClientRect();
+      const normX = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      const normY = ((touch.clientY - rect.top) / rect.height) * 2 - 1;
+      targetRotY = normX * 1.2;
+      targetRotX = normY * 0.9;
+    };
+
+    const handleTouchEnd = () => {
+      isHovering = false;
+      targetRotX = 0;
+      targetRotY = 0;
+    };
+
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mouseenter", handleMouseEnter);
     container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("touchstart", handleTouchStart, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
+    container.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     // Handle Window Resize
     const handleResize = () => {
@@ -245,6 +275,9 @@ export function Burger3D() {
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseenter", handleMouseEnter);
       container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
@@ -256,7 +289,7 @@ export function Burger3D() {
       initial={{ opacity: 0, scale: 0.9, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex size-full min-h-[380px] w-full max-w-[420px] items-center justify-center cursor-grab active:cursor-grabbing select-none"
+      className="relative flex size-full min-h-[300px] sm:min-h-[380px] w-full max-w-[420px] items-center justify-center cursor-grab active:cursor-grabbing select-none"
     >
       {/* Background ambient lighting halo */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/20 via-accent/20 to-transparent blur-3xl opacity-70 pointer-events-none" />

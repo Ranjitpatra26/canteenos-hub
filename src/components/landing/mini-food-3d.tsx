@@ -162,7 +162,19 @@ export function MiniFood3D({ type, label, className = "" }: MiniFood3DProps) {
       targetRotX = normY * 0.6;
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = container.getBoundingClientRect();
+      const normX = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      const normY = ((touch.clientY - rect.top) / rect.height) * 2 - 1;
+      targetRotY = normX * 1.0;
+      targetRotX = normY * 0.8;
+    };
+
     container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("touchstart", handleTouchMove, { passive: true });
+    container.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     const handleResize = () => {
       if (!container) return;
@@ -196,6 +208,8 @@ export function MiniFood3D({ type, label, className = "" }: MiniFood3DProps) {
     return () => {
       cancelAnimationFrame(animationId);
       container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("touchstart", handleTouchMove);
+      container.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };

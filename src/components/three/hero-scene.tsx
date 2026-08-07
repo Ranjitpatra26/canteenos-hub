@@ -196,7 +196,7 @@ function CameraRig({
   scroll: React.MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const pointer = useGlobalPointer();
   const target = useMemo(() => new THREE.Vector3(), []);
   const look = useMemo(() => new THREE.Vector3(), []);
@@ -204,20 +204,17 @@ function CameraRig({
 
   useFrame((_, delta) => {
     const s = scroll.current;
-    // Reduced motion: the camera stops chasing the cursor entirely — only the
-    // (user-driven) scroll offset moves it, so nothing animates on its own.
+    const isMobile = size.width < 768;
+    const baseZ = isMobile ? 14 : 8;
     const p = reducedMotion ? { x: 0, y: 0 } : pointer.current;
-    // Frame-rate independent easing, tuned high enough that the camera tracks
-    // the cursor without the rubber-band lag.
     const a = 1 - Math.exp(-11 * delta);
-    target.set(p.x * 1.8, 0.4 + p.y * 1.0 - s * 1.6, 8 - s * 3.2);
+    target.set(p.x * 1.8, 0.4 + p.y * 1.0 - s * 1.6, baseZ - s * 3.2);
     camera.position.lerp(target, a);
     lookTarget.set(p.x * 0.35, 0.2 + p.y * 0.2 - s * 0.8, 0);
     look.lerp(lookTarget, a);
     camera.lookAt(look);
   });
   return null;
-
 }
 
 function Plate({
@@ -229,7 +226,10 @@ function Plate({
   scroll: React.MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
+  const { size } = useThree();
+  const isMobile = size.width < 768;
   const group = useRef<THREE.Group>(null);
+
   useFrame((state) => {
     if (!group.current) return;
     if (reducedMotion) {
@@ -247,22 +247,27 @@ function Plate({
       ? { speed: 0, rotationIntensity: 0, floatIntensity: 0 }
       : { speed, rotationIntensity, floatIntensity };
 
+  const bowlPos = isMobile ? ([2.2, -0.4, 0] as const) : ([4.6, -0.6, 0] as const);
+  const burgerPos = isMobile ? ([-2.3, 1.4, -0.6] as const) : ([-4.8, 1.7, -0.6] as const);
+  const cupPos = isMobile ? ([-2.0, -1.2, -0.4] as const) : ([-4.2, -1.3, -0.4] as const);
+  const groupScale = isMobile ? 0.65 : 0.85;
+
   return (
-    <group ref={group} position={[0, -1.4, -3]} scale={0.85}>
+    <group ref={group} position={[0, -1.4, -3]} scale={groupScale}>
       <Float {...float(1.2, 0.4, 0.8)}>
-        <group position={[4.6, -0.6, 0]} scale={0.85}>
+        <group position={bowlPos} scale={0.85}>
           <Bowl color="#e2413f" />
           {reducedMotion ? null : <Steam count={tier === "high" ? 16 : 8} origin={[0, 0.4, 0]} />}
         </group>
       </Float>
       <Float {...float(1.5, 0.6, 1.1)}>
-        <group position={[-4.8, 1.7, -0.6]} rotation={[0, 0.4, 0.1]} scale={0.8}>
+        <group position={burgerPos} rotation={[0, 0.4, 0.1]} scale={0.8}>
           <Burger />
           {reducedMotion ? null : <Steam count={tier === "high" ? 12 : 6} origin={[0, 1.2, 0]} />}
         </group>
       </Float>
       <Float {...float(1.1, 0.5, 1)}>
-        <group position={[-4.2, -1.3, -0.4]} rotation={[0, -0.3, -0.08]} scale={0.8}>
+        <group position={cupPos} rotation={[0, -0.3, -0.08]} scale={0.8}>
           <Cup />
         </group>
       </Float>

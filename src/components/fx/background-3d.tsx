@@ -10,13 +10,16 @@ export function Background3D() {
 
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
+    const isMobile = window.innerWidth < 768;
+    const initialZ = isMobile ? Math.min(32, 17 * (768 / Math.max(320, window.innerWidth))) : 17;
+
     const camera = new THREE.PerspectiveCamera(
       60,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    camera.position.z = 17;
+    camera.position.z = initialZ;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -108,7 +111,7 @@ export function Background3D() {
 
     scene.add(marginsGroup);
 
-    // 4. Mouse Parallax Motion
+    // 4. Mouse / Touch Parallax Motion
     let targetX = 0;
     let targetY = 0;
 
@@ -116,9 +119,20 @@ export function Background3D() {
       targetX = (e.clientX / window.innerWidth - 0.5) * 2;
       targetY = (e.clientY / window.innerHeight - 0.5) * 2;
     };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      targetX = (touch.clientX / window.innerWidth - 0.5) * 2;
+      targetY = (touch.clientY / window.innerHeight - 0.5) * 2;
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     const handleResize = () => {
+      const isMob = window.innerWidth < 768;
+      camera.position.z = isMob ? Math.min(32, 17 * (768 / Math.max(320, window.innerWidth))) : 17;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -146,6 +160,7 @@ export function Background3D() {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("resize", handleResize);
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);

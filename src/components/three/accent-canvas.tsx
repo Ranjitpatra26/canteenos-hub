@@ -39,7 +39,7 @@ export function AccentCanvas({
 
   return (
     <div ref={ref} className={className} aria-hidden>
-      {mounted && inView && tier !== "low" && !reducedMotion ? (
+      {mounted && inView && !reducedMotion ? (
         <Suspense fallback={null}>
           <AccentScene variant={variant} color={color} />
         </Suspense>

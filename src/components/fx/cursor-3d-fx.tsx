@@ -59,7 +59,6 @@ export function MouseCursor3DFX() {
   const [dotPos, setDotPos] = useState({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Enable only for desktop / fine pointer mouse devices
     const mediaQuery = window.matchMedia("(pointer: fine)");
     setIsPointerFine(mediaQuery.matches);
 
@@ -70,9 +69,58 @@ export function MouseCursor3DFX() {
   }, []);
 
   useEffect(() => {
-    if (!isPointerFine) return;
-
     const particles: Particle[] = [];
+
+    const spawnGlitter = (x: number, y: number, count = 2) => {
+      for (let i = 0; i < count; i++) {
+        const color = GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)];
+        particles.push({
+          x: x + (Math.random() - 0.5) * 12,
+          y: y + (Math.random() - 0.5) * 12,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6 - 0.2,
+          size: Math.random() * 4 + 2,
+          alpha: 1.0,
+          type: "glitter",
+          color,
+          twinkleSpeed: Math.random() * 0.04 + 0.02,
+        });
+      }
+    };
+
+    const spawnBurst = (x: number, y: number) => {
+      for (let i = 0; i < 7; i++) {
+        const angle = (Math.PI * 2 * i) / 7;
+        const speed = Math.random() * 3 + 1.5;
+        const randomEmoji = FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)];
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.2,
+          size: Math.random() * 8 + 22,
+          alpha: 1.0,
+          type: "emoji",
+          emoji: randomEmoji,
+          rotation: (Math.random() - 0.5) * Math.PI,
+          vr: (Math.random() - 0.5) * 0.1,
+        });
+      }
+      for (let i = 0; i < 10; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 5 + 3,
+          alpha: 1.0,
+          type: "glitter",
+          color: GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)],
+        });
+      }
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX: x, clientY: y } = e;
@@ -80,7 +128,6 @@ export function MouseCursor3DFX() {
       mouseX.set(x);
       mouseY.set(y);
 
-      // Check if hovering interactive element
       const target = e.target as HTMLElement | null;
       if (
         target &&
@@ -97,66 +144,44 @@ export function MouseCursor3DFX() {
         setIsHovered(false);
       }
 
-      // MOTION TRAIL: Leave sparkling glitter / stardust effect on move
-      for (let i = 0; i < 2; i++) {
-        const color = GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)];
-        particles.push({
-          x: x + (Math.random() - 0.5) * 12,
-          y: y + (Math.random() - 0.5) * 12,
-          vx: (Math.random() - 0.5) * 0.6,
-          vy: (Math.random() - 0.5) * 0.6 - 0.2,
-          size: Math.random() * 4 + 2,
-          alpha: 1.0,
-          type: "glitter",
-          color,
-          twinkleSpeed: Math.random() * 0.04 + 0.02,
-        });
-      }
+      spawnGlitter(x, y, 2);
     };
 
-    const handleMouseDown = () => {
+    const handleMouseDown = (e: MouseEvent) => {
       setIsClicking(true);
-      // CLICK / STOP ACTION: Spawn burst of food emojis on click!
-      for (let i = 0; i < 7; i++) {
-        const angle = (Math.PI * 2 * i) / 7;
-        const speed = Math.random() * 3 + 1.5;
-        const randomEmoji = FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)];
-        particles.push({
-          x: dotPos.x,
-          y: dotPos.y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1.2,
-          size: Math.random() * 8 + 22, // 22px to 30px food emojis
-          alpha: 1.0,
-          type: "emoji",
-          emoji: randomEmoji,
-          rotation: (Math.random() - 0.5) * Math.PI,
-          vr: (Math.random() - 0.5) * 0.1,
-        });
-      }
-
-      // Extra burst glitter on click
-      for (let i = 0; i < 10; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 4 + 1;
-        particles.push({
-          x: dotPos.x,
-          y: dotPos.y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: Math.random() * 5 + 3,
-          alpha: 1.0,
-          type: "glitter",
-          color: GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)],
-        });
-      }
+      spawnBurst(e.clientX, e.clientY);
     };
 
     const handleMouseUp = () => setIsClicking(false);
 
+    // Mobile Touch Handlers
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      setDotPos({ x: touch.clientX, y: touch.clientY });
+      mouseX.set(touch.clientX);
+      mouseY.set(touch.clientY);
+      setIsClicking(true);
+      spawnBurst(touch.clientX, touch.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      setDotPos({ x: touch.clientX, y: touch.clientY });
+      mouseX.set(touch.clientX);
+      mouseY.set(touch.clientY);
+      spawnGlitter(touch.clientX, touch.clientY, 3);
+    };
+
+    const handleTouchEnd = () => setIsClicking(false);
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     // Canvas rendering loop
     const canvas = canvasRef.current;
@@ -182,7 +207,7 @@ export function MouseCursor3DFX() {
         p.y += p.vy;
 
         if (p.type === "emoji") {
-          p.alpha -= 0.016; // Smooth fade for food emojis on click
+          p.alpha -= 0.016;
           p.size *= 0.988;
           if (p.rotation !== undefined && p.vr !== undefined) {
             p.rotation += p.vr;
@@ -203,7 +228,6 @@ export function MouseCursor3DFX() {
           ctx.fillText(p.emoji ?? "🍔", 0, 0);
           ctx.restore();
         } else {
-          // Glitter sparkle particle logic
           p.alpha -= p.twinkleSpeed ?? 0.03;
           p.size *= 0.96;
 
@@ -226,46 +250,51 @@ export function MouseCursor3DFX() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [isPointerFine, mouseX, mouseY, dotPos.x, dotPos.y]);
-
-  if (!isPointerFine) return null;
+  }, [mouseX, mouseY]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden select-none">
       {/* Glitter & Food Emoji Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />
 
-      {/* Smooth Spring Trailing 3D Ring */}
-      <motion.div
-        style={{
-          x: mouseX,
-          y: mouseY,
-        }}
-        animate={{
-          scale: isClicking ? 0.7 : isHovered ? 1.6 : 1,
-          rotate: isHovered ? 45 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 350, damping: 25 }}
-        className={`absolute -left-5 -top-5 grid size-10 place-items-center rounded-full border transition-colors duration-200 ${
-          isHovered
-            ? "border-primary bg-primary/20 shadow-[0_0_30px_rgba(132,204,22,0.6)]"
-            : "border-primary/50 bg-primary/5 shadow-[0_0_15px_rgba(132,204,22,0.25)]"
-        }`}
-      >
-        <span className="size-full rounded-full border border-dashed border-primary/40 animate-spin-slow opacity-60" />
-      </motion.div>
+      {/* Reticle Dot & Outer Ring on fine pointer / desktop mouse */}
+      {isPointerFine ? (
+        <>
+          <motion.div
+            style={{
+              x: mouseX,
+              y: mouseY,
+            }}
+            animate={{
+              scale: isClicking ? 0.7 : isHovered ? 1.6 : 1,
+              rotate: isHovered ? 45 : 0,
+            }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className={`absolute -left-5 -top-5 grid size-10 place-items-center rounded-full border transition-colors duration-200 ${
+              isHovered
+                ? "border-primary bg-primary/20 shadow-[0_0_30px_rgba(132,204,22,0.6)]"
+                : "border-primary/50 bg-primary/5 shadow-[0_0_15px_rgba(132,204,22,0.25)]"
+            }`}
+          >
+            <span className="size-full rounded-full border border-dashed border-primary/40 animate-spin-slow opacity-60" />
+          </motion.div>
 
-      {/* High-Precision Center Reticle Dot */}
-      <div
-        style={{
-          transform: `translate3d(${dotPos.x}px, ${dotPos.y}px, 0px)`,
-        }}
-        className="absolute -left-1.5 -top-1.5 grid size-3 place-items-center rounded-full bg-primary shadow-[0_0_10px_2px_rgba(132,204,22,0.9)] transition-transform duration-75"
-      >
-        <span className="size-1 rounded-full bg-white" />
-      </div>
+          <div
+            style={{
+              transform: `translate3d(${dotPos.x}px, ${dotPos.y}px, 0px)`,
+            }}
+            className="absolute -left-1.5 -top-1.5 grid size-3 place-items-center rounded-full bg-primary shadow-[0_0_10px_2px_rgba(132,204,22,0.9)] transition-transform duration-75"
+          >
+            <span className="size-1 rounded-full bg-white" />
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
+

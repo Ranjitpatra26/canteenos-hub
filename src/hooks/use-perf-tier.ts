@@ -9,11 +9,17 @@ function detectTier(): PerfTier {
   const nav = navigator as Navigator & { deviceMemory?: number };
   const cores = nav.hardwareConcurrency ?? 4;
   const memory = nav.deviceMemory ?? 4;
-  const coarse = window.matchMedia?.("(pointer: coarse)").matches;
-  const narrow = window.innerWidth < 768;
 
-  if (cores <= 4 || memory <= 4 || (coarse && narrow)) return "low";
-  if (cores <= 8 || memory <= 8) return "medium";
+  let hasWebGL = true;
+  try {
+    const canvas = document.createElement("canvas");
+    hasWebGL = Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+  } catch {
+    hasWebGL = false;
+  }
+
+  if (!hasWebGL || cores < 2 || memory < 2) return "low";
+  if (cores <= 4 || memory <= 4) return "medium";
   return "high";
 }
 

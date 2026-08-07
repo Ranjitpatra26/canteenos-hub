@@ -62,7 +62,7 @@ CanteenOS features built-in Web Speech API voice ordering:
 ```
 
 * **Live Speech Transcription:** Transcribes speech live into the search input box as you talk.
-* **Grok 2 AI Backend:** Answers complex student nutrition questions, meal pairing suggestions, and budget calculations.
+* **Multi-LLM AI Engine:** Supports Groq (`llama-3.3-70b-versatile`), Google Gemini (`gemini-1.5-flash`), and xAI (`grok-2`) with automatic model candidate fallback, in-app key config 🔑, and built-in smart local fallback.
 * **Student Budget Combo Optimizer:** Select ₹80, ₹120, or ₹150 budget tabs to instantly compute and add the highest protein/calorie combo to your cart with 1 click.
 * **Live Kitchen Traffic Predictor:** Analyzes queue velocity and displays real-time estimated prep & pickup times (e.g. `~6 mins est. pickup · Fast Lane Open`).
 
@@ -277,6 +277,8 @@ erDiagram
    ```env
    VITE_SUPABASE_URL=https://fsljweofqzlyhyqidnhe.supabase.co
    VITE_SUPABASE_ANON_KEY=your_anon_key
+   # Optional: AI Assistant Key (Groq "gsk_...", Gemini "AIza...", or xAI Grok)
+   VITE_GROQ_API_KEY=your_groq_or_gemini_api_key
    ```
 
 4. **Launch Development Server**:

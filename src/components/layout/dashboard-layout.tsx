@@ -90,7 +90,7 @@ function SidebarNav({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <nav className="flex-1 space-y-7 overflow-y-auto px-3 py-5">
+    <nav className="flex-1 space-y-7 overflow-y-auto px-3 py-5" data-lenis-prevent>
       {sections.map((section) => (
         <div key={section.title}>
           {!collapsed ? <p className="label-micro mb-2 px-3">{section.title}</p> : null}
@@ -382,6 +382,7 @@ export function DashboardLayout({
         <main
           id="main-content"
           className="min-w-0 flex-1 overflow-y-auto px-4 py-8 pb-28 sm:px-6 lg:px-10 lg:pb-12"
+          data-lenis-prevent
         >
           <ErrorBoundary label="This workspace page">{children ?? <Outlet />}</ErrorBoundary>
         </main>

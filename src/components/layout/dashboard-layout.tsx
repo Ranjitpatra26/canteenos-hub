@@ -205,11 +205,11 @@ export function DashboardLayout({
   };
 
   return (
-    <div className="flex min-h-dvh w-full bg-background">
+    <div className="flex h-dvh w-full overflow-hidden bg-background">
       <motion.aside
         animate={{ width: collapsed ? 76 : 264 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-        className="sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex"
+        className="hidden h-dvh shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex"
       >
         <div className="flex h-16 items-center justify-between gap-2 border-b border-sidebar-border px-4">
           <Brand collapsed={collapsed} workspace={workspace} />
@@ -232,8 +232,8 @@ export function DashboardLayout({
         </div>
       </motion.aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/70 bg-background/70 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
+      <div className="flex h-dvh min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border/70 bg-background/70 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button
@@ -381,7 +381,7 @@ export function DashboardLayout({
 
         <main
           id="main-content"
-          className="min-w-0 flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-10 lg:pb-12"
+          className="min-w-0 flex-1 overflow-y-auto px-4 py-8 pb-28 sm:px-6 lg:px-10 lg:pb-12"
         >
           <ErrorBoundary label="This workspace page">{children ?? <Outlet />}</ErrorBoundary>
         </main>

@@ -58,7 +58,7 @@ function withSecurityHeaders(response: Response, request: Request): Response {
   headers.set("X-DNS-Prefetch-Control", "on");
   headers.set(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+    "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()",
   );
   if (new URL(request.url).protocol === "https:") {
     headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");

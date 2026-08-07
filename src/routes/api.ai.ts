@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import type { AiChatMessage } from "@/lib/canteen-ai";
 

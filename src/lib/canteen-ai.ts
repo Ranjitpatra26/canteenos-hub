@@ -327,10 +327,10 @@ export function answerQuestion(
 
   if (!q) return reply("Ask me anything about the canteen — menu, orders, coupons or timings.");
 
-  // Greetings
-  if (/^(hi|hey|hello|yo|namaste)\b/.test(q)) {
+  // Greetings (matches hi, hiii, heyyy, hellooo, yo, etc.)
+  if (/^(h[iaeyo]+|hello+|namaste|hola|sup|good\s*(morning|afternoon|evening))\b/i.test(q)) {
     return reply(
-      `Hi${ctx.name ? ` ${ctx.name}` : ""}! I'm Canteen AI. I can recommend dishes, explain your spending or help with an order.`,
+      `Hi${ctx.name ? ` ${ctx.name}` : ""}! I'm Canteen AI 👋. How can I help you today? Ask me for high-protein picks 🥩, budget combos 💰, or order recommendations!`,
       { chips: AI_STARTERS.slice(0, 3) },
     );
   }
@@ -429,8 +429,8 @@ export function answerQuestion(
   // Fallback: recommend
   const picks = recommendFor(ctx.items, ctx.orders, { favorites: ctx.favorites, limit: 3 });
   return reply(
-    `I'm not sure about that one yet, but based on the time of day and your history I'd go with these for ${mealWindow()}:`,
-    { items: picks.map((p) => p.item), chips: AI_STARTERS.slice(0, 2) },
+    `Hey${ctx.name ? ` ${ctx.name}` : ""}! Here are my top recommended picks for ${mealWindow()} based on popular student choices:`,
+    { items: picks.map((p) => p.item), chips: AI_STARTERS.slice(0, 3) },
   );
 }
 

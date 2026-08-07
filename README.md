@@ -25,7 +25,7 @@
 [![Grok 2 AI Engine](https://img.shields.io/badge/Canteen_AI-Grok_2_%2B_Voice_Commands-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-voice-command-ordering--ai-features)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[🚀 Live Web App](https://canteenos-hub.vercel.app) · [🌟 Overview](#-plain-english-executive-overview) · [👤 Owner Links](#-maintainer--owner-information) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Fitness & Protein](#-student-fitness-protein--gym-companion) · [🖼️ Visual Showcase](#-system-visual-showcase) · [🏗️ Architecture](#-system-topology--event-driven-architecture) · [⚡ Setup](#-developer-setup--getting-started)
+[🚀 Live Web App](https://canteenos-hub.vercel.app) · [📚 Developer Guide](docs/DEVELOPER_ARCHITECTURE_GUIDE.md) · [🌟 Overview](#-plain-english-executive-overview) · [👤 Owner Links](#-maintainer--owner-information) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Fitness & Protein](#-student-fitness-protein--gym-companion) · [🖼️ Visual Showcase](#-system-visual-showcase) · [🏗️ Architecture](#-system-topology--event-driven-architecture) · [⚡ Setup](#-developer-setup--getting-started)
 
 </div>
 

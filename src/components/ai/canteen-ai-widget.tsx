@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Bot, CornerDownLeft, Mic, MicOff, Plus, Sparkles, X } from "lucide-react";
+import { Bot, CornerDownLeft, Key, Mic, MicOff, Plus, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,8 @@ import {
   AI_STARTERS,
   answerQuestion,
   askGrokAi,
+  getGrokApiKey,
+  setGrokApiKey,
   type AiChatMessage,
 } from "@/lib/canteen-ai";
 import type { MenuItem } from "@/types";
@@ -300,12 +302,33 @@ export function CanteenAiWidget() {
                   Picks · protein & gym macros · voice ordering 🎙️
                 </p>
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                title="Configure AI API key (Gemini, Groq, xAI)"
+                onClick={() => {
+                  const current = getGrokApiKey();
+                  const val = prompt(
+                    "Enter your AI API Key (Gemini 'AIza...', Groq 'gsk_...', or xAI Grok):\n(Leave empty to use built-in smart local mode)",
+                    current,
+                  );
+                  if (val !== null) {
+                    setGrokApiKey(val.trim());
+                    toast.success(
+                      val.trim() ? "AI API key saved! 🚀" : "Switched to built-in smart mode",
+                    );
+                  }
+                }}
+              >
+                <Key className="size-3.5" />
+              </Button>
               <Badge variant="outline" className="rounded-full text-[10px]">
-                Grok AI
+                {getGrokApiKey() ? "LLM Active" : "Smart AI"}
               </Badge>
             </header>
 
-            <ScrollArea className="flex-1" ref={scrollRef}>
+            <ScrollArea className="flex-1" ref={scrollRef} data-lenis-prevent>
               <div className="space-y-4 p-4">
                 {messages.map((m) => (
                   <Bubble key={m.id} msg={m} onAdd={handleAdd} onChip={send} />

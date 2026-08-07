@@ -439,7 +439,11 @@ export function answerQuestion(
 /* ------------------------------------------------------------------ */
 
 export function getGrokApiKey(): string {
-  const envKey = (import.meta as any).env?.VITE_GROQ_API_KEY || (import.meta as any).env?.VITE_GROK_API_KEY || "";
+  const envKey =
+    (import.meta as any).env?.VITE_GEMINI_API_KEY ||
+    (import.meta as any).env?.VITE_GROQ_API_KEY ||
+    (import.meta as any).env?.VITE_GROK_API_KEY ||
+    "";
   if (envKey) return envKey;
   if (typeof window !== "undefined") {
     return localStorage.getItem("canteen_grok_api_key") || "";
@@ -472,12 +476,6 @@ export async function askGrokAi(
     )
     .join("\n");
 
-  const isGroq = apiKey.startsWith("gsk_");
-  const endpoint = isGroq
-    ? "https://api.groq.com/openai/v1/chat/completions"
-    : "https://api.x.ai/v1/chat/completions";
-  const modelName = isGroq ? "llama-3.3-70b-versatile" : "grok-2-latest";
-
   const systemPrompt = `You are Canteen AI, an intelligent, friendly AI assistant for CanteenOS (campus canteen platform).
 Student Name: ${ctx.name || "Student"}
 Current Meal Window: ${windowName}
@@ -490,31 +488,74 @@ Instructions:
 3. Keep the tone enthusiastic, modern, and student-friendly.`;
 
   try {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: modelName,
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...history.slice(-6).map((h) => ({ role: h.role, content: h.text })),
-          { role: "user", content: input },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
-    });
+    let replyText = "";
 
-    if (!res.ok) {
-      console.warn("AI API request failed with status", res.status);
-      return answerQuestion(input, ctx);
+    if (apiKey.startsWith("AIza")) {
+      // Gemini API key support
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: "user",
+                parts: [
+                  {
+                    text: `${systemPrompt}\n\nChat History:\n${history
+                      .slice(-4)
+                      .map((h) => `${h.role}: ${h.text}`)
+                      .join("\n")}\n\nUser Query: ${input}`,
+                  },
+                ],
+              },
+            ],
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        console.warn("Gemini API request failed with status", res.status);
+        return answerQuestion(input, ctx);
+      }
+
+      const data = await res.json();
+      replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+    } else {
+      // OpenAI / Groq / xAI format
+      const isGroq = apiKey.startsWith("gsk_");
+      const endpoint = isGroq
+        ? "https://api.groq.com/openai/v1/chat/completions"
+        : "https://api.x.ai/v1/chat/completions";
+      const modelName = isGroq ? "llama-3.3-70b-versatile" : "grok-2-latest";
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...history.slice(-6).map((h) => ({ role: h.role, content: h.text })),
+            { role: "user", content: input },
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        }),
+      });
+
+      if (!res.ok) {
+        console.warn("AI API request failed with status", res.status);
+        return answerQuestion(input, ctx);
+      }
+
+      const data = await res.json();
+      replyText = data?.choices?.[0]?.message?.content?.trim() || "";
     }
-
-    const data = await res.json();
-    const replyText = data?.choices?.[0]?.message?.content?.trim() || "";
 
     if (!replyText) {
       return answerQuestion(input, ctx);

@@ -24,6 +24,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: {
+    preset: process.env.VERCEL ? "vercel" : process.env.NETLIFY ? "netlify" : undefined,
+  },
   plugins: [
     // Generate the worker once, from the browser build only.
     clientOnly(

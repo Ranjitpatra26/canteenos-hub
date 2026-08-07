@@ -129,10 +129,9 @@ export function Magnetic({
   const y = useSpring(0, { stiffness: 320, damping: 22, mass: 0.3, restDelta: 0.1 });
 
   useEffect(() => {
-    if (tier === "low" || reducedMotion) return;
+    if (reducedMotion) return;
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     // Element-scoped listeners + a cached rect: a window-level pointermove per
     // magnetic element re-measured layout on every mouse move, which is what

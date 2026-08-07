@@ -117,7 +117,7 @@ export function GlobalFx() {
             />
           </>
         )}
-        {tier === "high" && !reducedMotion ? <Particles count={44} /> : null}
+        {!reducedMotion ? <Particles count={tier === "high" ? 44 : 24} /> : null}
         <div className="absolute inset-0 noise-overlay" />
       </div>
     </>

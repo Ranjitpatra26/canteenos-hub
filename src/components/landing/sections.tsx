@@ -76,20 +76,20 @@ export function Hero() {
           <SectionLabel>
             <Sparkles className="mr-1 inline size-3" /> Now serving 42 campuses
           </SectionLabel>
-          <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 text-3xl font-bold leading-[1.08] tracking-tight xs:text-4xl sm:text-6xl lg:text-7xl">
             The operating system for your <span className="text-gradient">campus canteen</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-sm text-muted-foreground sm:text-lg">
             Students order in seconds, the kitchen runs a live kanban, and admins see revenue,
             inventory and peak hours in real time. No queues. No paper tokens. No guesswork.
           </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" className="rounded-full px-7">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button asChild size="lg" className="w-full sm:w-auto rounded-full px-7">
               <Link to="/app">
                 Start ordering <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full px-7">
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-7">
               <Link to="/admin">View admin console</Link>
             </Button>
           </div>
@@ -127,22 +127,22 @@ function DashboardPreview() {
       </div>
       <div className="grid gap-4 p-4 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4">
             {[
               { l: "Revenue today", v: "₹63.2k" },
               { l: "Orders", v: "341" },
               { l: "Avg. prep", v: "6m 40s" },
               { l: "Rating", v: "4.8" },
             ].map((s) => (
-              <div key={s.l} className="rounded-xl border border-border bg-background/50 p-3">
-                <p className="text-[11px] text-muted-foreground">{s.l}</p>
-                <p className="mt-1 text-lg font-semibold">{s.v}</p>
+              <div key={s.l} className="rounded-xl border border-border bg-background/50 p-2.5 sm:p-3">
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">{s.l}</p>
+                <p className="mt-1 text-base sm:text-lg font-semibold">{s.v}</p>
               </div>
             ))}
           </div>
-          <div className="rounded-xl border border-border bg-background/50 p-4">
+          <div className="rounded-xl border border-border bg-background/50 p-3 sm:p-4">
             <p className="text-xs font-medium text-muted-foreground">Revenue this week</p>
-            <div className="mt-5 flex h-40 items-end gap-2 sm:gap-3">
+            <div className="mt-5 flex h-36 sm:h-40 items-end gap-1.5 sm:gap-3">
               {revenueSeries.map((r, i) => (
                 <motion.div
                   key={r.day}
@@ -354,7 +354,7 @@ export function HowItWorks() {
     <section id="how" className="relative overflow-hidden py-24">
       <AccentCanvas
         variant="orbit"
-        className="pointer-events-none absolute right-4 top-4 hidden h-48 w-48 opacity-45 xl:block"
+        className="pointer-events-none absolute right-2 top-2 size-36 opacity-35 sm:right-4 sm:top-4 sm:size-48 sm:opacity-45"
       />
       <div className="relative mx-auto max-w-6xl px-4">
         <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
@@ -713,7 +713,7 @@ export function CtaContact() {
           <AccentCanvas
             variant="knot"
             color="#6fe3e1"
-            className="pointer-events-none absolute -left-10 bottom-[-3rem] hidden h-56 w-56 opacity-40 lg:block"
+            className="pointer-events-none absolute -left-6 bottom-[-2rem] size-36 opacity-30 sm:-left-10 sm:bottom-[-3rem] sm:size-56 sm:opacity-40"
           />
           <div className="relative">
             <SectionLabel>Get started</SectionLabel>

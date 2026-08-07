@@ -356,7 +356,7 @@ export function answerQuestion(
   }
 
   // Veg / healthy / light
-  if (/(veg|vegetarian|healthy|light|low cal|diet)/.test(q)) {
+  if (/(veg|vegetarian|light|low cal)/.test(q) && !q.includes("plan") && !q.includes("diet")) {
     const picks = recommendFor(ctx.items, ctx.orders, {
       favorites: ctx.favorites,
       limit: 3,
@@ -365,6 +365,32 @@ export function answerQuestion(
       .map((s) => s.item)
       .sort((a, b) => a.calories - b.calories);
     return reply("Lighter vegetarian picks, sorted by calories:", { items: picks });
+  }
+
+  // Diet plan / 3-day meal plan queries
+  if (/(diet|plan|meal plan|schedule|3 day|3-day|diet plan)/.test(q)) {
+    return reply(
+      `Here is a structured 3-Day Student Canteen Diet Plan 🗓️:\n\n` +
+        `**Day 1 (High Protein & Focus)**\n` +
+        `• Breakfast: Masala Chai + Paneer Paratha\n` +
+        `• Lunch: Chole Bhature or Rajma Rice Bowl\n` +
+        `• Snack: Cold Coffee + Sprouts Salad\n` +
+        `• Dinner: Dal Tadka + 2 Roti + Salad\n\n` +
+        `**Day 2 (Clean Energy & Fat Loss)**\n` +
+        `• Breakfast: Idli Sambar / Poha\n` +
+        `• Lunch: Veg Thali or Egg Curry Rice\n` +
+        `• Snack: Fresh Fruit Juice + Masala Dosa\n` +
+        `• Dinner: Paneer Butter Masala + Roti\n\n` +
+        `**Day 3 (Budget & Balance)**\n` +
+        `• Breakfast: Upma / Bread Butter\n` +
+        `• Lunch: Mini Thali / Kadi Chawal\n` +
+        `• Snack: Lemon Tea + Veg Cutlet\n` +
+        `• Dinner: Egg Bhurji / Veg Biryani\n\n` +
+        `*Tip: Hit your daily 65g+ protein target by pairing lunch with extra Paneer or Eggs!*`,
+      {
+        chips: ["High protein gym options 🥩", "Low calorie fat loss picks 🥗"],
+      },
+    );
   }
 
   // Protein / Gym / Fitness
@@ -464,41 +490,6 @@ export async function askGrokAi(
 ): Promise<AiChatMessage> {
   const apiKey = getGrokApiKey();
 
-  try {
-    // 1. Try server API route first (bypasses browser CORS & protects key)
-    const apiRes = await fetch("/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        input,
-        ctx: { ...ctx, windowName: mealWindow() },
-        history,
-        apiKey,
-      }),
-    });
-
-    if (apiRes.ok) {
-      const apiData = await apiRes.json();
-      if (apiData?.text) {
-        const replyText = apiData.text.trim();
-        const matchedItems = ctx.items
-          .filter((i) => replyText.toLowerCase().includes(i.name.toLowerCase()))
-          .slice(0, 3);
-
-        return {
-          id: `ai_${Date.now()}`,
-          role: "assistant",
-          text: replyText,
-          items: matchedItems.length ? matchedItems : undefined,
-          chips: ["Tell me more", "Recommend another dish", "How fast is prep?"],
-        };
-      }
-    }
-  } catch (apiErr) {
-    console.warn("Server API AI endpoint error, trying direct fallback:", apiErr);
-  }
-
-  // 2. Direct client-side fetch fallback (if API key present)
   if (apiKey) {
     const windowName = mealWindow();
     const menuSummary = ctx.items
@@ -524,6 +515,7 @@ Instructions:
       let replyText = "";
 
       if (apiKey.startsWith("AIza")) {
+        // Gemini API
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
           {
@@ -552,33 +544,44 @@ Instructions:
           replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
         }
       } else {
+        // Groq / xAI API
         const isGroq = apiKey.startsWith("gsk_");
         const endpoint = isGroq
           ? "https://api.groq.com/openai/v1/chat/completions"
           : "https://api.x.ai/v1/chat/completions";
-        const modelName = isGroq ? "llama-3.3-70b-versatile" : "grok-2-latest";
 
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: modelName,
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...history.slice(-6).map((h) => ({ role: h.role, content: h.text })),
-              { role: "user", content: input },
-            ],
-            temperature: 0.7,
-            max_tokens: 500,
-          }),
-        });
+        const modelsToTry = isGroq
+          ? ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+          : ["grok-2-latest", "grok-beta"];
 
-        if (res.ok) {
-          const data = await res.json();
-          replyText = data?.choices?.[0]?.message?.content?.trim() || "";
+        for (const modelName of modelsToTry) {
+          try {
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model: modelName,
+                messages: [
+                  { role: "system", content: systemPrompt },
+                  ...history.slice(-6).map((h) => ({ role: h.role, content: h.text })),
+                  { role: "user", content: input },
+                ],
+                temperature: 0.7,
+                max_tokens: 500,
+              }),
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              replyText = data?.choices?.[0]?.message?.content?.trim() || "";
+              if (replyText) break;
+            }
+          } catch {
+            // continue to next model candidate
+          }
         }
       }
 
@@ -596,7 +599,7 @@ Instructions:
         };
       }
     } catch (err) {
-      console.warn("Direct LLM fetch error:", err);
+      console.warn("Direct LLM fetch exception:", err);
     }
   }
 

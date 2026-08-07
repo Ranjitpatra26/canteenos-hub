@@ -95,7 +95,7 @@ function MenuPage() {
         }
       />
 
-      <div className="sticky top-16 z-20 -mx-4 mb-6 bg-background/85 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
+      <div className="sticky -top-8 z-20 -mx-4 mb-6 border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

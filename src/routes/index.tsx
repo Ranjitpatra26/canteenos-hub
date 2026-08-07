@@ -34,12 +34,11 @@ const organizationLd = {
   "@type": "Organization",
   name: "CanteenOS",
   description: "Smart canteen ordering, kitchen operations and analytics for modern campuses.",
-  url: "/",
+  url: "https://canteenos-hub.vercel.app",
   logo: "/favicon.png",
   sameAs: [
     "https://github.com/Ranjitpatra26",
     "https://www.linkedin.com/in/ranjit-patra-b27816393",
-    "https://x.com"
   ],
 };
 

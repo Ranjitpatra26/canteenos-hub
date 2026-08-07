@@ -14,6 +14,7 @@
 
 **Order Ahead • Skip the Queue • Live Kitchen Kanban • Voice Ordering 🎙️ • Student Fitness & Protein Companion 🥩 • Dynamic QR Pickup**
 
+[![Vercel Deployment](https://img.shields.io/badge/Vercel_Deployment-Live_Production-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://canteenos-hub.vercel.app)
 [![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-Ranjit_Patra-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ranjit-patra-b27816393)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-Ranjitpatra26-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ranjitpatra26)
 [![GitHub Repository](https://img.shields.io/badge/Repository-canteenos--hub-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ranjitpatra26/canteenos-hub.git)
@@ -24,48 +25,22 @@
 [![Grok 2 AI Engine](https://img.shields.io/badge/Canteen_AI-Grok_2_%2B_Voice_Commands-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-voice-command-ordering--ai-features)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[🌟 Overview](#-plain-english-executive-overview) · [👤 Owner Links](#-maintainer--owner-information) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Fitness & Protein](#-student-fitness-protein--gym-companion) · [🖼️ Visual Showcase](#-system-visual-showcase) · [🏗️ Architecture](#-system-topology--event-driven-architecture) · [⚡ Setup](#-developer-setup--getting-started)
+[🚀 Live Web App](https://canteenos-hub.vercel.app) · [🌟 Overview](#-plain-english-executive-overview) · [👤 Owner Links](#-maintainer--owner-information) · [🎙️ Voice Ordering](#-voice-command-ordering--ai-features) · [🥩 Fitness & Protein](#-student-fitness-protein--gym-companion) · [🖼️ Visual Showcase](#-system-visual-showcase) · [🏗️ Architecture](#-system-topology--event-driven-architecture) · [⚡ Setup](#-developer-setup--getting-started)
 
 </div>
 
 ---
 
-## 📋 Master Table of Contents
-
-1. [🌟 Plain-English Executive Overview](#-plain-english-executive-overview)
-2. [💡 How CanteenOS Works in 4 Simple Steps](#-how-canteenos-works-in-4-simple-steps)
-3. [👤 Maintainer & Owner Information](#-maintainer--owner-information)
-4. [🎙️ Voice Command Ordering & AI Features](#-voice-command-ordering--ai-features)
-5. [🥩 Student Fitness, Protein & Gym Companion](#-student-fitness-protein--gym-companion)
-6. [👥 Quick-Start Guide by User Role](#-quick-start-by-user-role)
-7. [🗺️ Complete UI Route & Feature Map](#-complete-ui-route--feature-map)
-8. [🏗️ System Topology & Event-Driven Architecture](#-system-topology--event-driven-architecture)
-9. [👨‍🍳 Real-Time Kitchen Kanban Display System](#-real-time-kitchen-kanban-display-system)
-10. [📊 Database Schema & Entity Relationship Diagram (ERD)](#-database-schema--entity-relationship-diagram-erd)
-11. [🔐 Security Architecture & Kernel-Level RBAC](#-security-architecture--kernel-level-rbac)
-12. [📁 Complete Directory Blueprint](#-complete-directory-blueprint--codebase-tree)
-13. [⚙️ Developer Setup & Getting Started](#-developer-setup--getting-started)
+> 🚀 **OFFICIAL LIVE PRODUCTION DEPLOYMENT**:  
+> Experience CanteenOS live in your browser: **[https://canteenos-hub.vercel.app](https://canteenos-hub.vercel.app)**
 
 ---
-
-## 🌟 Plain-English Executive Overview
-
-### What is CanteenOS?
-Think of **CanteenOS** as an **all-in-one digital operating system for university cafeterias, office canteens, and food courts**. 
-
-Just like Uber Eats lets you order food on your phone, CanteenOS lets students and staff order meals ahead of time directly on their phones. But unlike public delivery apps, CanteenOS connects **directly to a live touchscreen in the kitchen**, an **executive dashboard in the canteen manager's office**, and an **AI Student Fitness & Protein Companion**.
-
-### The Problem It Solves
-1. ⏰ **No More 20-Minute Lunch Lines**: Students build their cart, pay on their phone, and receive an instant pickup pass with an animated QR code.
-2. 🎙️ **Hands-Free Voice Ordering**: Students can tap the microphone button and speak their food orders naturally (*"Add Paneer Tikka to my cart"*).
-3. 🥩 **Student Gym & Protein Tracking**: Students track daily protein targets (e.g. 65g/day), calculate calories, and generate custom 3-Day Grok AI student diet plans.
-4. 👨‍🍳 **No More Blind Kitchen Rushes**: Kitchen staff see incoming tickets automatically organized by station (Grill, Beverages, Hot Food) on a real-time Kanban prep board.
-5. 📊 **No More Lost Revenue or Food Waste**: Canteen owners get real-time analytics on daily revenue, peak order hours, raw material stock, and staff shifts.
 
 ## 👤 Maintainer & Owner Information
 
 | Role / Contact | Details & Direct Redirect Links |
 | :--- | :--- |
+| **Official Live Production URL** | 🚀 [canteenos-hub.vercel.app](https://canteenos-hub.vercel.app) |
 | **Lead Developer & Creator** | **Ranjit Patra** |
 | **Email Address** | [`ranjitpatra2611@gmail.com`](mailto:ranjitpatra2611@gmail.com) |
 | **LinkedIn Profile** | 👔 [www.linkedin.com/in/ranjit-patra-b27816393](https://www.linkedin.com/in/ranjit-patra-b27816393) |

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { AiChatMessage } from "@/lib/canteen-ai";
 
-export const Route = createFileRoute("/api/ai" as any)({
+// @ts-expect-error routeTree is generated at build time
+export const Route = createFileRoute("/api/ai")({
   server: {
     handlers: {
       POST: async ({ request }) => {

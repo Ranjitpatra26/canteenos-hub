@@ -15,18 +15,13 @@ export const lovable = {
       provider: "google" | "apple" | "microsoft" | "lovable",
       opts?: SignInOptions,
     ) => {
-      const isLocalhost =
+      const isLovableCloud =
         typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1" ||
-          window.location.hostname.endsWith(".localhost"));
+        window.location.hostname.endsWith(".lovableproject.com");
 
-      if (isLocalhost) {
-        if (provider === "lovable") {
-          return { error: new Error("Lovable OAuth is only available in Lovable Cloud environment.") };
-        }
+      if (!isLovableCloud || provider !== "lovable") {
         const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: provider as "google" | "apple" | "azure",
+          provider: (provider === "microsoft" ? "azure" : provider) as "google" | "apple" | "azure",
           options: {
             redirectTo: opts?.redirect_uri || `${window.location.origin}/app`,
           },

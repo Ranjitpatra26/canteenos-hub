@@ -26,13 +26,14 @@ export function MiniFood3D({ type, label, className = "" }: MiniFood3DProps) {
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.set(0, 0.3, 6.5);
 
+    const isMobileScreen = window.innerWidth < 768;
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !isMobileScreen,
       alpha: true,
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobileScreen ? 1.0 : Math.min(window.devicePixelRatio, 2));
 
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);

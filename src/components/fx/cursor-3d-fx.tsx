@@ -72,6 +72,9 @@ export function MouseCursor3DFX() {
     const particles: Particle[] = [];
 
     const spawnGlitter = (x: number, y: number, count = 2) => {
+      if (particles.length > (isPointerFine ? 80 : 30)) {
+        particles.splice(0, count);
+      }
       for (let i = 0; i < count; i++) {
         const color = GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)];
         particles.push({

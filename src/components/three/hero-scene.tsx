@@ -303,12 +303,14 @@ export default function HeroScene({
     };
   }, []);
 
+  const isMobileScreen = typeof window !== "undefined" && window.innerWidth < 768;
+
   return (
     <Canvas
       frameloop={visible ? "always" : "never"}
       shadows={false}
-      dpr={tier === "high" ? [1, 1.5] : [1, 1.15]}
-      gl={{ antialias: tier !== "low", powerPreference: "high-performance", alpha: true }}
+      dpr={isMobileScreen ? [1, 1.1] : tier === "high" ? [1, 1.5] : [1, 1.15]}
+      gl={{ antialias: !isMobileScreen && tier !== "low", powerPreference: "high-performance", alpha: true }}
       style={{ background: "transparent" }}
       camera={{ position: [0, 0.6, 8], fov: 42 }}
       onCreated={({ gl }) => {
@@ -323,13 +325,12 @@ export default function HeroScene({
         penumbra={0.8}
         intensity={140}
         color="#d9ff8a"
-        
       />
       <pointLight position={[-6, -2, 4]} intensity={60} color="#4fd8e0" />
       <pointLight position={[0, 4, -6]} intensity={40} color="#ff8a5c" />
 
-      {/* The HDR environment is a heavy remote asset — only load it on capable devices. */}
-      {tier === "high" ? (
+      {/* The HDR environment is a heavy remote asset — load on desktop/capable devices */}
+      {tier === "high" && !isMobileScreen ? (
         <Suspense fallback={null}>
           <Environment preset="city" />
         </Suspense>
@@ -340,7 +341,7 @@ export default function HeroScene({
         <Ingredients tier={tier} reducedMotion={reducedMotion} />
         {reducedMotion ? null : (
           <Sparkles
-            count={tier === "high" ? 70 : 32}
+            count={isMobileScreen ? 20 : tier === "high" ? 70 : 32}
             scale={[14, 8, 8]}
             size={2.4}
             speed={0.35}
@@ -348,14 +349,14 @@ export default function HeroScene({
             opacity={0.7}
           />
         )}
-        {tier === "high" ? (
+        {tier === "high" && !isMobileScreen ? (
           <ContactShadows position={[0, -2.2, 0]} opacity={0.45} blur={2} far={6} scale={16} frames={1} />
         ) : null}
       </Suspense>
 
       <CameraRig scroll={scroll} reducedMotion={reducedMotion} />
 
-      {tier !== "low" ? (
+      {!isMobileScreen && tier !== "low" ? (
         <EffectComposer enableNormalPass={false}>
           <Bloom
             intensity={tier === "high" ? 0.7 : 0.45}

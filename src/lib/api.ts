@@ -269,7 +269,7 @@ export function useDeleteCategory() {
 /* Orders                                                              */
 /* ------------------------------------------------------------------ */
 
-/** Student view: user's orders with demo fallback if user has no orders yet. */
+/** Student view: user's isolated orders from Supabase (empty array if no orders placed yet). */
 export function useMyOrders() {
   const { user } = useAuth();
   return useQuery<DbOrder[]>({
@@ -282,20 +282,13 @@ export function useMyOrders() {
           .select(ORDER_SELECT)
           .eq("user_id", user!.id)
           .order("placed_at", { ascending: false });
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return (data ?? []).map(mapOrder);
         }
       } catch (err) {
-        console.warn("Supabase my orders fetch skipped, fallback to demo:", err);
+        console.warn("Supabase my orders fetch error:", err);
       }
-      return demoOrders.map((o) => ({
-        ...o,
-        userId: user?.id ?? o.customerId,
-        note: null,
-        packaging: 0,
-        discount: 0,
-        couponCode: null,
-      })) as DbOrder[];
+      return [];
     },
   });
 }
@@ -395,18 +388,40 @@ export async function insertOrder(userId: string, input: NewOrderInput) {
     })),
   );
   if (itemsError) throw itemsError;
+
+  // Deduct from student's campus wallet balance if paid via wallet
+  if (input.paymentMethod.toLowerCase().includes("wallet")) {
+    try {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", userId)
+        .maybeSingle();
+      if (prof) {
+        const current = Number(prof.wallet_balance ?? 500);
+        const nextBal = Math.max(0, current - input.total);
+        await supabase.from("profiles").update({ wallet_balance: nextBal }).eq("id", userId);
+      }
+    } catch (err) {
+      console.warn("Failed to update wallet balance on order place:", err);
+    }
+  }
+
   return data as { id: string; code: string };
 }
 
 export function useCreateOrder() {
   const qc = useQueryClient();
-  const { user } = useAuth();
+  const { user, refresh } = useAuth();
   return useMutation({
     mutationFn: async (input: NewOrderInput) => {
       if (!user) throw new Error("You need to be signed in to place an order.");
       return insertOrder(user.id, input);
     },
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["orders"] }),
+    onSuccess: async () => {
+      await refresh();
+      void qc.invalidateQueries({ queryKey: ["orders"] });
+    },
   });
 }
 
@@ -670,6 +685,32 @@ export function useUpdateProfile() {
       const { error } = await supabase
         .from("profiles")
         .update(patch as never)
+        .eq("id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: async () => {
+      await refresh();
+      void qc.invalidateQueries({ queryKey: ["directory"] });
+    },
+  });
+}
+
+export function useTopUpWallet() {
+  const qc = useQueryClient();
+  const { user, refresh } = useAuth();
+  return useMutation({
+    mutationFn: async (amount: number) => {
+      if (!user) throw new Error("Not signed in");
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", user.id)
+        .maybeSingle();
+      const current = Number(prof?.wallet_balance ?? 500);
+      const nextBal = current + amount;
+      const { error } = await supabase
+        .from("profiles")
+        .update({ wallet_balance: nextBal })
         .eq("id", user.id);
       if (error) throw error;
     },

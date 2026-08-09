@@ -72,10 +72,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { data: menuItems = [] } = useMenuItems();
   const { data: coupons = [] } = useCoupons();
 
+  const userCartKey = user ? `${CART_KEY}.${user.id}` : `${CART_KEY}.guest`;
+  const userFavKey = user ? `${FAV_KEY}.${user.id}` : `${FAV_KEY}.guest`;
+
+  // Reload cart lines per user
   useEffect(() => {
-    setLines(readStorage<CartLine[]>(CART_KEY, []));
-    setFavorites(readStorage<string[]>(FAV_KEY, []));
-  }, []);
+    setLines(readStorage<CartLine[]>(userCartKey, []));
+    setPromo(null);
+  }, [userCartKey]);
 
   /** Favourites live in the database for signed-in students. */
   useEffect(() => {
@@ -87,29 +91,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
         .eq("user_id", user.id)
         .then(({ data }) => {
           if (!active) return;
-          if (data && data.length > 0) {
+          if (data) {
             setFavorites(data.map((f) => f.menu_item_id));
-          } else if (menuItems.length > 0) {
-            setFavorites(menuItems.slice(0, 4).map((m) => m.id));
+          } else {
+            setFavorites([]);
           }
         });
-    } else if (menuItems.length > 0 && favorites.length === 0) {
-      setFavorites(menuItems.slice(0, 4).map((m) => m.id));
+    } else {
+      setFavorites(readStorage<string[]>(userFavKey, []));
     }
     return () => {
       active = false;
     };
-  }, [user, menuItems]);
+  }, [user, userFavKey]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    window.localStorage.setItem(CART_KEY, JSON.stringify(lines));
-  }, [lines]);
+    window.localStorage.setItem(userCartKey, JSON.stringify(lines));
+  }, [lines, userCartKey]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    window.localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
-  }, [favorites]);
+    window.localStorage.setItem(userFavKey, JSON.stringify(favorites));
+  }, [favorites, userFavKey]);
 
   const add = useCallback((itemId: string, qty = 1) => {
     setLines((prev) => {

@@ -26,6 +26,7 @@ import { enqueueOrder } from "@/lib/offline-queue";
 import { usePaymentMode } from "@/lib/payment-mode";
 import { startStripeCheckout } from "@/lib/payments";
 
+import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/format";
 import { foodImage } from "@/lib/food-images";
 
@@ -46,13 +47,6 @@ export const Route = createFileRoute("/app/checkout")({
   }),
   component: CheckoutPage,
 });
-
-const payments = [
-  { id: "upi", label: "UPI", hint: "GPay, PhonePe, Paytm", icon: Smartphone },
-  { id: "wallet", label: "Campus wallet", hint: "Balance ₹1,840", icon: Wallet },
-  { id: "card", label: "Card", hint: "Visa •••• 4412", icon: CreditCard },
-  { id: "mess", label: "Mess account", hint: "Billed monthly", icon: Building2 },
-];
 
 function QrTile({ code }: { code: string }) {
   const cells = Array.from({ length: 169 }, (_, i) => {
@@ -91,15 +85,29 @@ function QrTile({ code }: { code: string }) {
 
 function CheckoutPage() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const { detailed, totals, method, promo, clear } = useCart();
   const createOrder = useCreateOrder();
   const [payment, setPayment] = useState("upi");
   const [slot, setSlot] = useState("asap");
   const [note, setNote] = useState("");
-  const [phone, setPhone] = useState("98765 43210");
+  const [phone, setPhone] = useState(profile?.phone ?? "");
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState<string | null>(null);
   const [paymentMode] = usePaymentMode();
+
+  useEffect(() => {
+    if (profile?.phone && !phone) {
+      setPhone(profile.phone);
+    }
+  }, [profile?.phone, phone]);
+
+  const payments = [
+    { id: "upi", label: "UPI", hint: "GPay, PhonePe, Paytm", icon: Smartphone },
+    { id: "wallet", label: "Campus wallet", hint: `Balance ${inr(profile?.wallet_balance ?? 0)}`, icon: Wallet },
+    { id: "card", label: "Card", hint: "Visa •••• 4412", icon: CreditCard },
+    { id: "mess", label: "Mess account", hint: "Billed monthly", icon: Building2 },
+  ];
 
   useEffect(() => {
     if (placed) celebrate();
@@ -208,6 +216,13 @@ function CheckoutPage() {
         price: l.item.price,
       })),
     };
+
+    if (payment === "wallet" && (profile?.wallet_balance ?? 0) < totals.total) {
+      toast.error("Insufficient campus wallet balance", {
+        description: `Your balance is ${inr(profile?.wallet_balance ?? 0)}, but order total is ${inr(totals.total)}. Please top up your wallet or select another payment option.`,
+      });
+      return;
+    }
 
     // Offline: park the order locally and let the queue sync it automatically.
     if (typeof navigator !== "undefined" && !navigator.onLine) {

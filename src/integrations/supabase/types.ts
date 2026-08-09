@@ -438,6 +438,7 @@ export type Database = {
           student_id: string | null
           tint: string
           updated_at: string
+          wallet_balance: number
           year: string | null
         }
         Insert: {
@@ -452,6 +453,7 @@ export type Database = {
           student_id?: string | null
           tint?: string
           updated_at?: string
+          wallet_balance?: number
           year?: string | null
         }
         Update: {
@@ -466,6 +468,7 @@ export type Database = {
           student_id?: string | null
           tint?: string
           updated_at?: string
+          wallet_balance?: number
           year?: string | null
         }
         Relationships: []

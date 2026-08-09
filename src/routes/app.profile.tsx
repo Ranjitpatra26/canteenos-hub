@@ -17,7 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { inr, shortDate, timeAgo } from "@/lib/format";
 import { useAuth } from "@/hooks/use-auth";
-import { useMenuItems, useMyOrders, useUpdateProfile } from "@/lib/api";
+import { useMenuItems, useMyOrders, useTopUpWallet, useUpdateProfile } from "@/lib/api";
 import { useCart } from "@/contexts/cart-context";
 import { frequentlyOrdered } from "@/lib/canteen-ai";
 import { toast } from "sonner";
@@ -45,17 +45,21 @@ export const Route = createFileRoute("/app/profile")({
 function ProfilePage() {
   const { profile, user, role } = useAuth();
   const updateProfile = useUpdateProfile();
+  const topUpWallet = useTopUpWallet();
   const { data: orders = [] } = useMyOrders();
   const { data: items = [] } = useMenuItems();
   const { favorites } = useCart();
 
   const [name, setName] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [phone, setPhone] = useState("");
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
+  const [topUpAmount, setTopUpAmount] = useState("500");
 
   useEffect(() => {
     setName(profile?.full_name ?? "");
+    setStudentId(profile?.student_id ?? "");
     setPhone(profile?.phone ?? "");
     setDepartment(profile?.department ?? "");
     setYear(profile?.year ?? "");
@@ -239,13 +243,42 @@ function ProfilePage() {
           ))}
         </TabsList>
 
-        <TabsContent value="profile">
+        <TabsContent value="profile" className="space-y-6">
+          <SectionCard title="Campus Wallet" description="Manage your campus balance and instant top-ups.">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Current balance</p>
+                <p className="text-3xl font-bold tracking-tight text-primary">{inr(profile?.wallet_balance ?? 0)}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {[100, 200, 500, 1000].map((amt) => (
+                  <Button
+                    key={amt}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-xl"
+                    disabled={topUpWallet.isPending}
+                    onClick={() => {
+                      topUpWallet.mutate(amt, {
+                        onSuccess: () => toast.success(`Added ${inr(amt)} to campus wallet`),
+                        onError: (err) => toast.error(err instanceof Error ? err.message : "Top up failed"),
+                      });
+                    }}
+                  >
+                    +{inr(amt)}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </SectionCard>
+
           <SectionCard title="Personal details" description="Keep your campus record up to date.">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 updateProfile.mutate(
-                  { full_name: name, phone, department, year },
+                  { full_name: name, student_id: studentId, phone, department, year },
                   {
                     onSuccess: () => toast.success("Profile updated"),
                     onError: (err: unknown) =>
@@ -269,9 +302,9 @@ function ProfilePage() {
                   <Label htmlFor="p-id">Student ID</Label>
                   <Input
                     id="p-id"
-                    value={profile?.student_id ?? "—"}
-                    readOnly
-                    disabled
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    placeholder="e.g. STU202601"
                     className="rounded-xl"
                   />
                 </div>
@@ -281,6 +314,7 @@ function ProfilePage() {
                     id="p-dept"
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
+                    placeholder="e.g. Computer Science"
                     className="rounded-xl"
                   />
                 </div>
@@ -290,6 +324,7 @@ function ProfilePage() {
                     id="p-year"
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
+                    placeholder="e.g. 3rd Year"
                     className="rounded-xl"
                   />
                 </div>
@@ -309,6 +344,7 @@ function ProfilePage() {
                     id="p-phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 98765 43210"
                     className="rounded-xl"
                   />
                 </div>

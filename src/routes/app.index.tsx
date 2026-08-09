@@ -59,6 +59,13 @@ function StudentHome() {
     .slice(0, 4);
   const recent = orders.filter((o) => o.status === "completed").slice(0, 4);
 
+  const monthOrders = orders.filter((o) => {
+    const d = new Date(o.placedAt);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const monthSpent = monthOrders.reduce((sum, o) => sum + o.total, 0);
+
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
@@ -77,32 +84,28 @@ function StudentHome() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Wallet balance"
-          value={inr(1840)}
-          delta={{ value: "+₹500" }}
-          hint="topped up Monday"
+          value={inr(profile?.wallet_balance ?? 0)}
+          hint="Campus wallet account"
           icon={<Wallet className="size-4" />}
           index={0}
         />
         <StatCard
           label="Orders this month"
-          value="18"
-          delta={{ value: "+4" }}
-          hint="vs last month"
+          value={String(monthOrders.length)}
+          hint="completed & active"
           icon={<Receipt className="size-4" />}
           index={1}
         />
         <StatCard
           label="Spent this month"
-          value={inr(3465)}
-          delta={{ value: "-8%", positive: false }}
-          hint="under your budget"
+          value={inr(monthSpent)}
+          hint="total orders spend"
           icon={<IndianRupee className="size-4" />}
           index={2}
         />
         <StatCard
           label="Avg. pickup wait"
           value="6m 20s"
-          delta={{ value: "-2m" }}
           hint="faster than campus avg"
           icon={<Clock className="size-4" />}
           index={3}

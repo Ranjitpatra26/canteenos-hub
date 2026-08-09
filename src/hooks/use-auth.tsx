@@ -27,6 +27,7 @@ export interface Profile {
   avatar_url: string | null;
   tint: string;
   status: string;
+  wallet_balance: number;
 }
 
 interface AuthContextValue {
@@ -115,16 +116,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const nextProfile: Profile = {
       id: uid,
-      full_name: rawProfile?.full_name || currentUser?.user_metadata?.full_name || (isAdminUser ? "Ranjit Patra" : "Student"),
+      full_name:
+        rawProfile?.full_name ||
+        currentUser?.user_metadata?.full_name ||
+        (isAdminUser ? "Ranjit Patra" : currentUser?.email ? currentUser.email.split("@")[0] : "Student"),
       email: rawProfile?.email || currentUser?.email || null,
-      student_id: rawProfile?.student_id || "RM24G5",
-      department: rawProfile?.department || "Computer Engineering",
-      year: rawProfile?.year || "3rd Year",
-      phone: rawProfile?.phone || null,
+      student_id: rawProfile?.student_id || currentUser?.user_metadata?.student_id || null,
+      department: rawProfile?.department || currentUser?.user_metadata?.department || null,
+      year: rawProfile?.year || currentUser?.user_metadata?.year || null,
+      phone: rawProfile?.phone || currentUser?.user_metadata?.phone || null,
       avatar_url: rawProfile?.avatar_url || null,
       tint: rawProfile?.tint || "124 70% 55%",
       status: rawProfile?.status || "active",
+      wallet_balance: Number(rawProfile?.wallet_balance ?? 500),
     };
+
+    // Auto-create/upsert user profile in DB if not created yet
+    if (!rawProfile) {
+      void supabase.from("profiles").upsert(
+        {
+          id: uid,
+          full_name: nextProfile.full_name,
+          email: nextProfile.email,
+          student_id: nextProfile.student_id,
+          department: nextProfile.department,
+          year: nextProfile.year,
+          phone: nextProfile.phone,
+          wallet_balance: nextProfile.wallet_balance,
+        },
+        { onConflict: "id" }
+      );
+    }
 
     let nextRoles = ((r ?? []) as { role: Role }[]).map((x) => x.role);
 

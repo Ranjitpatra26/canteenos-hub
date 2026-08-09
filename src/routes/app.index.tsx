@@ -15,8 +15,6 @@ import { inr, clockTime, tintGradient } from "@/lib/format";
 import { toast } from "sonner";
 import { foodImageById } from "@/lib/food-images";
 
-import { EarnBonusCard } from "@/components/shared/earn-bonus-card";
-
 export const Route = createFileRoute("/app/")({
   head: () => ({
     meta: [
@@ -115,12 +113,9 @@ function StudentHome() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <section className="space-y-6 lg:col-span-2">
-          <EarnBonusCard />
-
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold tracking-tight">Live orders</h2>
+        <section className="lg:col-span-2">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold tracking-tight">Live orders</h2>
             <Button asChild variant="ghost" size="sm" className="rounded-lg">
               <Link to="/app/orders">View all</Link>
             </Button>
@@ -184,7 +179,6 @@ function StudentHome() {
                 }}
               />
             ))}
-          </div>
           </div>
         </section>
 

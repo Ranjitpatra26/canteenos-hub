@@ -436,6 +436,8 @@ export type Database = {
           phone: string | null
           status: string
           student_id: string | null
+          referral_code: string | null
+          referred_by: string | null
           tint: string
           updated_at: string
           wallet_balance: number
@@ -449,6 +451,8 @@ export type Database = {
           full_name?: string
           id: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           status?: string
           student_id?: string | null
           tint?: string
@@ -464,6 +468,8 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           status?: string
           student_id?: string | null
           tint?: string
@@ -515,6 +521,42 @@ export type Database = {
           reward_amount?: number
           task_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          referee_email: string | null
+          referee_id: string | null
+          referee_name: string | null
+          referrer_id: string
+          reward_amount: number
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          referee_email?: string | null
+          referee_id?: string | null
+          referee_name?: string | null
+          referrer_id: string
+          reward_amount?: number
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          referee_email?: string | null
+          referee_id?: string | null
+          referee_name?: string | null
+          referrer_id?: string
+          reward_amount?: number
+          status?: string
         }
         Relationships: []
       }

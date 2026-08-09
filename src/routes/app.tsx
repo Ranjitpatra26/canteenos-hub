@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
   Bell,
   BotMessageSquare,
+  Gift,
   Heart,
   LayoutGrid,
   Receipt,
@@ -27,6 +28,7 @@ const sections: NavSection[] = [
   {
     title: "Account",
     items: [
+      { label: "Earn & Refer", to: "/app/rewards", icon: Gift, badge: "Bonus" },
       { label: "My orders", to: "/app/orders", icon: Receipt },
       { label: "Notifications", to: "/app/notifications", icon: Bell },
       { label: "Profile", to: "/app/profile", icon: User },

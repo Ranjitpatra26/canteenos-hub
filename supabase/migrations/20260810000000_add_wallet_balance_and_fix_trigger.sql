@@ -1,15 +1,18 @@
--- Add wallet_balance column to profiles table if not present with ₹100 initial welcome bonus
+-- Add wallet_balance, referral_code, and referred_by columns to profiles table
 alter table public.profiles add column if not exists wallet_balance numeric not null default 100.00;
+alter table public.profiles add column if not exists referral_code text;
+alter table public.profiles add column if not exists referred_by text;
 
--- Update handle_new_user trigger function to set wallet_balance to 100 and save user metadata correctly
+-- Update handle_new_user trigger function to set wallet_balance to 100, generate referral_code, and save metadata
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare
   requested text := coalesce(new.raw_user_meta_data->>'role','student');
   granted public.app_role;
   admin_exists boolean;
+  gen_code text := 'CAMPUS-' || upper(substr(md5(random()::text), 1, 6));
 begin
-  insert into public.profiles (id, full_name, email, student_id, department, year, phone, wallet_balance)
+  insert into public.profiles (id, full_name, email, student_id, department, year, phone, wallet_balance, referral_code, referred_by)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email,'@',1)),
@@ -18,10 +21,13 @@ begin
     new.raw_user_meta_data->>'department',
     new.raw_user_meta_data->>'year',
     new.raw_user_meta_data->>'phone',
-    100.00
+    100.00,
+    gen_code,
+    new.raw_user_meta_data->>'referred_by'
   ) on conflict (id) do update set
     full_name = coalesce(excluded.full_name, profiles.full_name),
-    email = coalesce(excluded.email, profiles.email);
+    email = coalesce(excluded.email, profiles.email),
+    referral_code = coalesce(profiles.referral_code, excluded.referral_code);
 
   select exists(select 1 from public.user_roles where role = 'admin') into admin_exists;
 
@@ -59,6 +65,31 @@ create policy "users_select_own_claimed_rewards" on public.claimed_rewards
 drop policy if exists "users_insert_own_claimed_rewards" on public.claimed_rewards;
 create policy "users_insert_own_claimed_rewards" on public.claimed_rewards
   for insert to authenticated with check (auth.uid() = user_id);
+
+-- Create referrals table to track friend referrals and bonus payouts
+create table if not exists public.referrals (
+  id uuid primary key default gen_random_uuid(),
+  referrer_id uuid not null references auth.users(id) on delete cascade,
+  referee_id uuid references auth.users(id) on delete cascade,
+  referee_name text,
+  referee_email text,
+  code text not null,
+  reward_amount numeric not null default 50.00,
+  status text not null default 'completed',
+  created_at timestamptz not null default now()
+);
+
+grant select, insert on public.referrals to authenticated;
+grant all on public.referrals to service_role;
+alter table public.referrals enable row level security;
+
+drop policy if exists "users_select_own_referrals" on public.referrals;
+create policy "users_select_own_referrals" on public.referrals
+  for select to authenticated using (auth.uid() = referrer_id or auth.uid() = referee_id);
+
+drop policy if exists "users_insert_own_referrals" on public.referrals;
+create policy "users_insert_own_referrals" on public.referrals
+  for insert to authenticated with check (auth.uid() = referrer_id or auth.uid() = referee_id);
 
 -- Atomic RPC function to claim a bonus task reward securely without duplicates
 create or replace function public.claim_bonus_reward(p_task_id text, p_amount numeric)

@@ -53,6 +53,7 @@ import { Route as AppCheckoutRouteImport } from './routes/app.checkout'
 import { Route as AppFavoritesRouteImport } from './routes/app.favorites'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppRewardsRouteImport } from './routes/app.rewards'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as KitchenIndexRouteImport } from './routes/kitchen.index'
 import { Route as KitchenHistoryRouteImport } from './routes/kitchen.history'
@@ -306,6 +307,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRewardsRoute = AppRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -517,6 +523,7 @@ export interface FileRoutesByFullPath {
   '/app/favorites': typeof AppFavoritesRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/rewards': typeof AppRewardsRoute
   '/app/settings': typeof AppSettingsRoute
   '/kitchen/history': typeof KitchenHistoryRoute
   '/kitchen/menu': typeof KitchenMenuRoute
@@ -588,6 +595,7 @@ export interface FileRoutesByTo {
   '/app/favorites': typeof AppFavoritesRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/rewards': typeof AppRewardsRoute
   '/app/settings': typeof AppSettingsRoute
   '/kitchen/history': typeof KitchenHistoryRoute
   '/kitchen/menu': typeof KitchenMenuRoute
@@ -667,6 +675,7 @@ export interface FileRoutesById {
   '/app/favorites': typeof AppFavoritesRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/rewards': typeof AppRewardsRoute
   '/app/settings': typeof AppSettingsRoute
   '/kitchen/history': typeof KitchenHistoryRoute
   '/kitchen/menu': typeof KitchenMenuRoute
@@ -1261,6 +1270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/rewards': {
+      id: '/app/rewards'
+      path: '/rewards'
+      fullPath: '/app/rewards'
+      preLoaderRoute: typeof AppRewardsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/settings': {
       id: '/app/settings'
       path: '/settings'
@@ -1630,6 +1646,7 @@ interface AppRouteChildren {
   AppFavoritesRoute: typeof AppFavoritesRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppRewardsRoute: typeof AppRewardsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppMenuItemIdRoute: typeof AppMenuItemIdRoute
@@ -1645,6 +1662,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFavoritesRoute: AppFavoritesRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppProfileRoute: AppProfileRoute,
+  AppRewardsRoute: AppRewardsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
   AppMenuItemIdRoute: AppMenuItemIdRoute,

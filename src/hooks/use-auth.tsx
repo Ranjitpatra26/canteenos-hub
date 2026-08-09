@@ -28,6 +28,7 @@ export interface Profile {
   tint: string;
   status: string;
   wallet_balance: number;
+  referral_code: string | null;
 }
 
 interface AuthContextValue {
@@ -113,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const currentUser = sessionRes.data.session?.user;
 
     const isAdminUser = currentUser?.email?.toLowerCase() === "ranjitpatra2611@gmail.com";
+    const defaultRefCode = `CAMPUS-${uid.slice(0, 6).toUpperCase()}`;
 
     const nextProfile: Profile = {
       id: uid,
@@ -129,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       tint: rawProfile?.tint || "124 70% 55%",
       status: rawProfile?.status || "active",
       wallet_balance: Number(rawProfile?.wallet_balance ?? 100),
+      referral_code: rawProfile?.referral_code || defaultRefCode,
     };
 
     // Auto-create/upsert user profile in DB if not created yet
@@ -143,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           year: nextProfile.year,
           phone: nextProfile.phone,
           wallet_balance: nextProfile.wallet_balance,
+          referral_code: nextProfile.referral_code,
         },
         { onConflict: "id" }
       );

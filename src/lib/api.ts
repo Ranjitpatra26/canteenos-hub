@@ -837,11 +837,15 @@ export function useReferrals() {
 
 export function useRedeemReferralCode() {
   const qc = useQueryClient();
-  const { user, refresh } = useAuth();
+  const { user, roles, refresh } = useAuth();
 
   return useMutation({
     mutationFn: async (code: string) => {
       if (!user) throw new Error("Please sign in to redeem code.");
+      if (!roles.includes("student")) {
+        throw new Error("Referral rewards are exclusive to student accounts.");
+      }
+
       const cleanCode = code.trim().toUpperCase();
       if (!cleanCode) throw new Error("Enter a valid referral code.");
 

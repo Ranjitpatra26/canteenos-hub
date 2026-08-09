@@ -32,7 +32,8 @@ export const Route = createFileRoute("/app/rewards")({
 });
 
 function RewardsPage() {
-  const { profile, user } = useAuth();
+  const { profile, user, roles } = useAuth();
+  const isStudent = roles.includes("student");
   const topUpWallet = useTopUpWallet();
   const { data: referrals = [] } = useReferrals();
   const redeemCode = useRedeemReferralCode();
@@ -76,6 +77,25 @@ function RewardsPage() {
       },
     });
   };
+
+  if (!isStudent) {
+    return (
+      <div className="mx-auto max-w-4xl space-y-6 text-center py-12">
+        <PageHeader
+          title="Earn & Refer"
+          description="Student Referral & Micro-task Bonus Rewards"
+          crumbs={[{ label: "Workspace", to: "/app" }, { label: "Earn & Refer" }]}
+        />
+        <div className="surface-card p-8 rounded-3xl space-y-3 max-w-lg mx-auto border border-amber-500/30">
+          <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">Student Exclusive</Badge>
+          <h2 className="text-xl font-bold">Student Only Program</h2>
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            The student referral program and bonus wallet tasks are exclusively reserved for registered student accounts.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">

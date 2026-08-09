@@ -58,7 +58,6 @@ function ProfilePage() {
   const [phone, setPhone] = useState("");
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
-  const [topUpAmount, setTopUpAmount] = useState("500");
 
   useEffect(() => {
     setName(profile?.full_name ?? "");

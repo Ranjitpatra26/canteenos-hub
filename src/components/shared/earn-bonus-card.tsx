@@ -1,11 +1,21 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
-import { Gift, CheckCircle2, UserCheck, PhoneCall, Heart, Calendar, ShoppingBag } from "lucide-react";
+import {
+  Gift,
+  CheckCircle2,
+  UserCheck,
+  ShoppingBag,
+  Flame,
+  Award,
+  Users,
+  Heart,
+  TrendingUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/use-auth";
-import { useMyOrders, useClaimedRewards, useClaimBonusReward } from "@/lib/api";
+import { useMyOrders, useClaimedRewards, useClaimBonusReward, useReferrals } from "@/lib/api";
 import { useCart } from "@/contexts/cart-context";
 import { celebrate } from "@/lib/fx";
 import { inr } from "@/lib/format";
@@ -18,6 +28,8 @@ interface BonusTask {
   reward: number;
   icon: React.ComponentType<{ className?: string }>;
   isEligible: boolean;
+  progressText?: string;
+  progressPercent?: number;
 }
 
 export function EarnBonusCard() {
@@ -25,6 +37,7 @@ export function EarnBonusCard() {
   const { data: orders = [] } = useMyOrders();
   const { favorites } = useCart();
   const { data: dbClaimedIds = [] } = useClaimedRewards();
+  const { data: referrals = [] } = useReferrals();
   const claimReward = useClaimBonusReward();
 
   const storageKey = user ? `canteenos.claimed_tasks.${user.id}` : "canteenos.claimed_tasks.guest";
@@ -49,48 +62,74 @@ export function EarnBonusCard() {
     return map;
   }, [localClaimed, dbClaimedIds]);
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const validOrders = useMemo(() => orders.filter((o) => o.status !== "cancelled"), [orders]);
+  const totalSpend = useMemo(() => validOrders.reduce((sum, o) => sum + o.total, 0), [validOrders]);
+
+  const weeklyOrders = useMemo(() => {
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return validOrders.filter((o) => new Date(o.placedAt).getTime() >= sevenDaysAgo);
+  }, [validOrders]);
 
   const tasks: BonusTask[] = [
     {
-      id: "profile_complete",
-      title: "Complete Student Profile",
-      desc: "Add your Student ID and Department to your profile",
-      reward: 25,
-      icon: UserCheck,
-      isEligible: Boolean(profile?.student_id && profile?.department),
+      id: "orders_5_completed",
+      title: "Campus Regular — 5 Orders",
+      desc: "Place and complete at least 5 canteen orders",
+      reward: 30,
+      icon: ShoppingBag,
+      isEligible: validOrders.length >= 5,
+      progressText: `${Math.min(validOrders.length, 5)}/5 Orders`,
+      progressPercent: Math.min(100, (validOrders.length / 5) * 100),
     },
     {
-      id: "phone_added",
-      title: "Add Phone Number",
-      desc: "Save your contact number for instant pickup notifications",
-      reward: 25,
-      icon: PhoneCall,
-      isEligible: Boolean(profile?.phone),
+      id: "weekly_streak_3",
+      title: "Weekly Streak — 3 Orders in 7 Days",
+      desc: "Order 3 times within a single week",
+      reward: 20,
+      icon: Flame,
+      isEligible: weeklyOrders.length >= 3,
+      progressText: `${Math.min(weeklyOrders.length, 3)}/3 Orders this week`,
+      progressPercent: Math.min(100, (weeklyOrders.length / 3) * 100),
     },
     {
-      id: "favorite_saved",
-      title: "Save Favorite Dish",
-      desc: "Star at least 1 dish in the canteen menu",
+      id: "spend_500_milestone",
+      title: "Canteen Foodie — Spend ₹500",
+      desc: "Reach ₹500 total lifetime spend on canteen meals",
+      reward: 40,
+      icon: TrendingUp,
+      isEligible: totalSpend >= 500,
+      progressText: `${inr(Math.min(totalSpend, 500))} / ${inr(500)}`,
+      progressPercent: Math.min(100, (totalSpend / 500) * 100),
+    },
+    {
+      id: "refer_2_friends",
+      title: "Campus Ambassador — Invite 2 Friends",
+      desc: "Invite 2 campus friends using your referral code",
+      reward: 50,
+      icon: Users,
+      isEligible: referrals.length >= 2,
+      progressText: `${Math.min(referrals.length, 2)}/2 Friends Joined`,
+      progressPercent: Math.min(100, (referrals.length / 2) * 100),
+    },
+    {
+      id: "favorites_3_saved",
+      title: "Curate Menu — Save 3 Favorites",
+      desc: "Star at least 3 favorite dishes on the canteen menu",
       reward: 15,
       icon: Heart,
-      isEligible: favorites.length > 0,
+      isEligible: favorites.length >= 3,
+      progressText: `${Math.min(favorites.length, 3)}/3 Dishes Starred`,
+      progressPercent: Math.min(100, (favorites.length / 3) * 100),
     },
     {
-      id: `daily_checkin_${todayStr}`,
-      title: "Daily Canteen Check-in",
-      desc: "Claim your daily student attendance reward",
-      reward: 10,
-      icon: Calendar,
-      isEligible: true,
-    },
-    {
-      id: "first_order",
-      title: "Place 1st Canteen Order",
-      desc: "Order any item from today's menu",
-      reward: 50,
-      icon: ShoppingBag,
-      isEligible: orders.length > 0,
+      id: "profile_verification_full",
+      title: "Verified Student Profile Record",
+      desc: "Complete Student Roll No, Department, and Contact Number",
+      reward: 25,
+      icon: UserCheck,
+      isEligible: Boolean(profile?.student_id && profile?.department && profile?.phone),
+      progressText: profile?.student_id && profile?.department && profile?.phone ? "Profile Verified" : "Incomplete Info",
+      progressPercent: profile?.student_id && profile?.department && profile?.phone ? 100 : 33,
     },
   ];
 
@@ -110,8 +149,8 @@ export function EarnBonusCard() {
           if (typeof window !== "undefined") {
             localStorage.setItem(storageKey, JSON.stringify(next));
           }
-          toast.success(`🎉 +${inr(task.reward)} Bonus Claimed!`, {
-            description: `Added directly to your campus wallet balance.`,
+          toast.success(`🎉 +${inr(task.reward)} Milestone Reward Claimed!`, {
+            description: `Credited directly to your campus wallet balance.`,
           });
         },
         onError: (err) => {
@@ -126,33 +165,33 @@ export function EarnBonusCard() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-5">
         <div className="flex items-center gap-3">
           <div className="grid size-11 place-items-center rounded-2xl bg-primary/12 text-primary">
-            <Gift className="size-6" />
+            <Award className="size-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold tracking-tight">Earn Bonus Wallet Money</h3>
+              <h3 className="text-lg font-semibold tracking-tight">Campus Milestone Bonus Rewards</h3>
               <Badge variant="secondary" className="rounded-full text-xs font-semibold text-primary">
-                +₹100 Signup Bonus Active
+                Real Milestones
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Complete simple campus micro-tasks to earn extra wallet cash.
+              Complete real campus dining milestones and invite friends to earn wallet money.
             </p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">Total Bonus Earned</p>
+          <p className="text-xs text-muted-foreground">Milestones Earned</p>
           <p className="text-lg font-bold text-success">+{inr(totalEarned)}</p>
         </div>
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-2 text-xs font-medium text-muted-foreground">
-        <span>Task Progress ({claimedCount}/{tasks.length})</span>
-        <span>{Math.round((claimedCount / tasks.length) * 100)}% Complete</span>
+        <span>Milestones Completed ({claimedCount}/{tasks.length})</span>
+        <span>{Math.round((claimedCount / tasks.length) * 100)}% Overall Progress</span>
       </div>
       <Progress value={(claimedCount / tasks.length) * 100} className="mt-1.5 h-2" />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         {tasks.map((task) => {
           const isDone = Boolean(claimed[task.id]);
           const Icon = task.icon;
@@ -161,7 +200,7 @@ export function EarnBonusCard() {
             <motion.div
               key={task.id}
               whileHover={{ y: -2 }}
-              className={`flex items-start justify-between gap-3 rounded-2xl border p-4 transition-all ${
+              className={`flex flex-col justify-between gap-3 rounded-2xl border p-4 transition-all ${
                 isDone
                   ? "border-success/30 bg-success/5"
                   : task.isEligible
@@ -169,46 +208,59 @@ export function EarnBonusCard() {
                   : "border-border/60 bg-muted/30"
               }`}
             >
-              <div className="flex items-start gap-3 min-w-0">
-                <div
-                  className={`mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl ${
-                    isDone
-                      ? "bg-success/20 text-success"
-                      : task.isEligible
-                      ? "bg-primary/20 text-primary"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Icon className="size-4.5" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="truncate text-sm font-semibold">{task.title}</p>
-                    <Badge variant="outline" className="shrink-0 text-[10px]">
-                      +{inr(task.reward)}
-                    </Badge>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div
+                    className={`mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl ${
+                      isDone
+                        ? "bg-success/20 text-success"
+                        : task.isEligible
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className="size-4.5" />
                   </div>
-                  <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{task.desc}</p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-sm font-semibold">{task.title}</p>
+                      <Badge variant="outline" className="shrink-0 text-[10px]">
+                        +{inr(task.reward)}
+                      </Badge>
+                    </div>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{task.desc}</p>
+                  </div>
+                </div>
+
+                <div className="shrink-0">
+                  {isDone ? (
+                    <Badge variant="secondary" className="gap-1 rounded-lg text-success border-success/30">
+                      <CheckCircle2 className="size-3" /> Claimed
+                    </Badge>
+                  ) : (
+                    <Button
+                      size="sm"
+                      disabled={!task.isEligible || claimReward.isPending}
+                      onClick={() => handleClaim(task)}
+                      className="h-8 rounded-lg text-xs font-semibold"
+                      variant={task.isEligible ? "default" : "outline"}
+                    >
+                      {claimReward.isPending ? "Claiming…" : task.isEligible ? "Claim" : "Locked"}
+                    </Button>
+                  )}
                 </div>
               </div>
 
-              <div className="shrink-0">
-                {isDone ? (
-                  <Badge variant="secondary" className="gap-1 rounded-lg text-success border-success/30">
-                    <CheckCircle2 className="size-3" /> Done
-                  </Badge>
-                ) : (
-                  <Button
-                    size="sm"
-                    disabled={!task.isEligible || claimReward.isPending}
-                    onClick={() => handleClaim(task)}
-                    className="h-8 rounded-lg text-xs"
-                    variant={task.isEligible ? "default" : "outline"}
-                  >
-                    {claimReward.isPending ? "Claiming…" : task.isEligible ? "Claim" : "Locked"}
-                  </Button>
-                )}
-              </div>
+              {/* Progress bar per milestone */}
+              {task.progressText && !isDone && (
+                <div className="space-y-1 pt-1 border-t border-border/40">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
+                    <span>Progress</span>
+                    <span>{task.progressText}</span>
+                  </div>
+                  <Progress value={task.progressPercent ?? 0} className="h-1.5" />
+                </div>
+              )}
             </motion.div>
           );
         })}

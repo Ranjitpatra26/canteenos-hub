@@ -16,7 +16,7 @@ interface BonusTask {
   title: string;
   desc: string;
   reward: number;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   isEligible: boolean;
 }
 

@@ -1,7 +1,7 @@
--- Add wallet_balance column to profiles table if not present
-alter table public.profiles add column if not exists wallet_balance numeric not null default 500.00;
+-- Add wallet_balance column to profiles table if not present with ₹100 initial welcome bonus
+alter table public.profiles add column if not exists wallet_balance numeric not null default 100.00;
 
--- Update handle_new_user trigger function to set wallet_balance and save user metadata correctly
+-- Update handle_new_user trigger function to set wallet_balance to 100 and save user metadata correctly
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare
@@ -18,7 +18,7 @@ begin
     new.raw_user_meta_data->>'department',
     new.raw_user_meta_data->>'year',
     new.raw_user_meta_data->>'phone',
-    500.00
+    100.00
   ) on conflict (id) do update set
     full_name = coalesce(excluded.full_name, profiles.full_name),
     email = coalesce(excluded.email, profiles.email);

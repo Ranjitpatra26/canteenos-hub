@@ -22,6 +22,7 @@ import { useCart } from "@/contexts/cart-context";
 import { frequentlyOrdered } from "@/lib/canteen-ai";
 import { toast } from "sonner";
 import { foodImageById } from "@/lib/food-images";
+import { EarnBonusCard } from "@/components/shared/earn-bonus-card";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
@@ -244,6 +245,8 @@ function ProfilePage() {
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
+          <EarnBonusCard />
+
           <SectionCard title="Campus Wallet" description="Manage your campus balance and instant top-ups.">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>

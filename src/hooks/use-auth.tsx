@@ -128,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       avatar_url: rawProfile?.avatar_url || null,
       tint: rawProfile?.tint || "124 70% 55%",
       status: rawProfile?.status || "active",
-      wallet_balance: Number(rawProfile?.wallet_balance ?? 500),
+      wallet_balance: Number(rawProfile?.wallet_balance ?? 100),
     };
 
     // Auto-create/upsert user profile in DB if not created yet

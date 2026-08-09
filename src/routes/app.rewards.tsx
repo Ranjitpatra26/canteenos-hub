@@ -16,6 +16,8 @@ import { celebrate } from "@/lib/fx";
 import { inr } from "@/lib/format";
 import { toast } from "sonner";
 
+import { WalletTopUpDialog } from "@/components/wallet/wallet-topup-dialog";
+
 export const Route = createFileRoute("/app/rewards")({
   head: () => ({
     meta: [
@@ -78,6 +80,9 @@ function RewardsPage() {
     });
   };
 
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(200);
+
   if (!isStudent) {
     return (
       <div className="mx-auto max-w-4xl space-y-6 text-center py-12">
@@ -99,6 +104,7 @@ function RewardsPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      <WalletTopUpDialog open={topUpOpen} onOpenChange={setTopUpOpen} defaultAmount={topUpAmount} />
       <PageHeader
         title="Earn & Refer"
         description="Complete campus micro-tasks or invite your friends to earn wallet bonus money."

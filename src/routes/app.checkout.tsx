@@ -32,6 +32,8 @@ import { foodImage } from "@/lib/food-images";
 
 import { cn } from "@/lib/utils";
 
+import { WalletTopUpDialog } from "@/components/wallet/wallet-topup-dialog";
+
 export const Route = createFileRoute("/app/checkout")({
   head: () => ({
     meta: [
@@ -95,6 +97,8 @@ function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState<string | null>(null);
   const [paymentMode] = usePaymentMode();
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(200);
 
   useEffect(() => {
     if (profile?.phone && !phone) {
@@ -272,6 +276,7 @@ function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-6xl">
+      <WalletTopUpDialog open={topUpOpen} onOpenChange={setTopUpOpen} defaultAmount={topUpAmount} />
       <PageHeader
         title="Checkout"
         description="Pay now and collect with a QR — no queue, no cash."
@@ -343,22 +348,43 @@ function CheckoutPage() {
               className="mt-4 grid gap-3 sm:grid-cols-2"
             >
               {payments.map((p) => (
-                <Label
-                  key={p.id}
-                  className={cn(
-                    "flex cursor-pointer items-center gap-3 rounded-xl border p-4 font-normal transition-colors",
-                    payment === p.id
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:border-primary/40",
-                  )}
-                >
-                  <RadioGroupItem value={p.id} />
-                  <p.icon className="size-4 text-primary" />
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium">{p.label}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{p.hint}</span>
-                  </span>
-                </Label>
+                <div key={p.id} className="relative">
+                  <Label
+                    className={cn(
+                      "flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 font-normal transition-colors",
+                      payment === p.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/40",
+                    )}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <RadioGroupItem value={p.id} />
+                      <p.icon className="size-4 text-primary shrink-0" />
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">{p.label}</span>
+                        <span className="block truncate text-xs text-muted-foreground">{p.hint}</span>
+                      </span>
+                    </div>
+
+                    {p.id === "wallet" && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        className="h-7 rounded-lg text-[11px] px-2 shrink-0 font-semibold"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          const needed = Math.max(100, totals.total - (profile?.wallet_balance ?? 0));
+                          setTopUpAmount(needed);
+                          setTopUpOpen(true);
+                        }}
+                      >
+                        + Top Up
+                      </Button>
+                    )}
+                  </Label>
+                </div>
               ))}
             </RadioGroup>
           </section>

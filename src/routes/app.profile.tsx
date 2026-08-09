@@ -24,6 +24,8 @@ import { toast } from "sonner";
 import { foodImageById } from "@/lib/food-images";
 import { EarnBonusCard } from "@/components/shared/earn-bonus-card";
 
+import { WalletTopUpDialog } from "@/components/wallet/wallet-topup-dialog";
+
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
     meta: [
@@ -151,8 +153,12 @@ function ProfilePage() {
     detail: `${o.lines.length} item${o.lines.length === 1 ? "" : "s"} · ${inr(o.total)} · ${o.counter}`,
   }));
 
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(200);
+
   return (
     <div className="mx-auto max-w-5xl">
+      <WalletTopUpDialog open={topUpOpen} onOpenChange={setTopUpOpen} defaultAmount={topUpAmount} />
       <PageHeader
         title="Profile"
         description="Your campus identity, canteen activity and rewards."
@@ -260,13 +266,10 @@ function ProfilePage() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="rounded-xl"
-                    disabled={topUpWallet.isPending}
+                    className="rounded-xl font-semibold text-xs"
                     onClick={() => {
-                      topUpWallet.mutate(amt, {
-                        onSuccess: () => toast.success(`Added ${inr(amt)} to campus wallet`),
-                        onError: (err) => toast.error(err instanceof Error ? err.message : "Top up failed"),
-                      });
+                      setTopUpAmount(amt);
+                      setTopUpOpen(true);
                     }}
                   >
                     +{inr(amt)}

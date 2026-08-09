@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
-import { Gift, CheckCircle2, Sparkles, UserCheck, PhoneCall, Heart, Calendar, ShoppingBag } from "lucide-react";
+import { Gift, CheckCircle2, UserCheck, PhoneCall, Heart, Calendar, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/use-auth";
-import { useTopUpWallet, useMyOrders } from "@/lib/api";
+import { useMyOrders, useClaimedRewards, useClaimBonusReward } from "@/lib/api";
 import { useCart } from "@/contexts/cart-context";
 import { celebrate } from "@/lib/fx";
 import { inr } from "@/lib/format";
@@ -22,30 +22,32 @@ interface BonusTask {
 
 export function EarnBonusCard() {
   const { user, profile } = useAuth();
-  const topUpWallet = useTopUpWallet();
   const { data: orders = [] } = useMyOrders();
   const { favorites } = useCart();
+  const { data: dbClaimedIds = [] } = useClaimedRewards();
+  const claimReward = useClaimBonusReward();
 
   const storageKey = user ? `canteenos.claimed_tasks.${user.id}` : "canteenos.claimed_tasks.guest";
-  const [claimed, setClaimed] = useState<Record<string, boolean>>({});
+  const [localClaimed, setLocalClaimed] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
       const raw = localStorage.getItem(storageKey);
-      if (raw) setClaimed(JSON.parse(raw));
-      else setClaimed({});
+      if (raw) setLocalClaimed(JSON.parse(raw));
+      else setLocalClaimed({});
     } catch {
-      setClaimed({});
+      setLocalClaimed({});
     }
   }, [storageKey]);
 
-  const saveClaimed = (next: Record<string, boolean>) => {
-    setClaimed(next);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(storageKey, JSON.stringify(next));
+  const claimed = useMemo(() => {
+    const map = { ...localClaimed };
+    for (const id of dbClaimedIds) {
+      map[id] = true;
     }
-  };
+    return map;
+  }, [localClaimed, dbClaimedIds]);
 
   const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -92,26 +94,31 @@ export function EarnBonusCard() {
     },
   ];
 
-  const claimedCount = Object.keys(claimed).filter((k) => claimed[k]).length;
-  const totalEarnable = tasks.reduce((sum, t) => sum + t.reward, 0);
+  const claimedCount = tasks.filter((t) => claimed[t.id]).length;
   const totalEarned = tasks.filter((t) => claimed[t.id]).reduce((sum, t) => sum + t.reward, 0);
 
   const handleClaim = (task: BonusTask) => {
-    if (claimed[task.id] || topUpWallet.isPending) return;
+    if (claimed[task.id] || claimReward.isPending) return;
 
-    topUpWallet.mutate(task.reward, {
-      onSuccess: () => {
-        celebrate();
-        const next = { ...claimed, [task.id]: true };
-        saveClaimed(next);
-        toast.success(`🎉 +${inr(task.reward)} Bonus Claimed!`, {
-          description: `Added directly to your campus wallet balance.`,
-        });
+    claimReward.mutate(
+      { taskId: task.id, amount: task.reward },
+      {
+        onSuccess: () => {
+          celebrate();
+          const next = { ...localClaimed, [task.id]: true };
+          setLocalClaimed(next);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(storageKey, JSON.stringify(next));
+          }
+          toast.success(`🎉 +${inr(task.reward)} Bonus Claimed!`, {
+            description: `Added directly to your campus wallet balance.`,
+          });
+        },
+        onError: (err) => {
+          toast.error(err instanceof Error ? err.message : "Claim failed");
+        },
       },
-      onError: (err) => {
-        toast.error(err instanceof Error ? err.message : "Claim failed");
-      },
-    });
+    );
   };
 
   return (
@@ -193,12 +200,12 @@ export function EarnBonusCard() {
                 ) : (
                   <Button
                     size="sm"
-                    disabled={!task.isEligible || topUpWallet.isPending}
+                    disabled={!task.isEligible || claimReward.isPending}
                     onClick={() => handleClaim(task)}
                     className="h-8 rounded-lg text-xs"
                     variant={task.isEligible ? "default" : "outline"}
                   >
-                    {task.isEligible ? "Claim" : "Locked"}
+                    {claimReward.isPending ? "Claiming…" : task.isEligible ? "Claim" : "Locked"}
                   </Button>
                 )}
               </div>

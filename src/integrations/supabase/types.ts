@@ -494,11 +494,42 @@ export type Database = {
         }
         Relationships: []
       }
+      claimed_rewards: {
+        Row: {
+          claimed_at: string
+          id: string
+          reward_amount: number
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          reward_amount: number
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          reward_amount?: number
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      claim_bonus_reward: {
+        Args: {
+          p_amount: number
+          p_task_id: string
+        }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

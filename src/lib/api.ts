@@ -706,16 +706,94 @@ export function useTopUpWallet() {
         .select("wallet_balance")
         .eq("id", user.id)
         .maybeSingle();
-      const current = Number(prof?.wallet_balance ?? 500);
+      const current = Number(prof?.wallet_balance ?? 100);
       const nextBal = current + amount;
       const { error } = await supabase
         .from("profiles")
-        .update({ wallet_balance: nextBal })
-        .eq("id", user.id);
+        .upsert({ id: user.id, wallet_balance: nextBal }, { onConflict: "id" });
       if (error) throw error;
     },
     onSuccess: async () => {
       await refresh();
+      void qc.invalidateQueries({ queryKey: ["directory"] });
+    },
+  });
+}
+
+export function useClaimedRewards() {
+  const { user } = useAuth();
+  return useQuery<string[]>({
+    queryKey: ["claimed-rewards", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from("claimed_rewards")
+          .select("task_id")
+          .eq("user_id", user!.id);
+        if (!error && data) {
+          return data.map((r: { task_id: string }) => r.task_id);
+        }
+      } catch (err) {
+        console.warn("Could not fetch claimed rewards from DB:", err);
+      }
+      return [];
+    },
+  });
+}
+
+export function useClaimBonusReward() {
+  const qc = useQueryClient();
+  const { user, refresh } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({ taskId, amount }: { taskId: string; amount: number }) => {
+      if (!user) throw new Error("You must be signed in to claim rewards.");
+
+      // Try RPC function first
+      const { error: rpcErr } = await supabase.rpc("claim_bonus_reward", {
+        p_task_id: taskId,
+        p_amount: amount,
+      });
+
+      if (!rpcErr) return;
+
+      // Fallback: direct insert + update
+      const { data: existing } = await supabase
+        .from("claimed_rewards")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("task_id", taskId)
+        .maybeSingle();
+
+      if (existing) {
+        throw new Error("This reward has already been claimed.");
+      }
+
+      await supabase.from("claimed_rewards").insert({
+        user_id: user.id,
+        task_id: taskId,
+        reward_amount: amount,
+      });
+
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const current = Number(prof?.wallet_balance ?? 100);
+      const nextBal = current + amount;
+
+      const { error: updateErr } = await supabase
+        .from("profiles")
+        .upsert({ id: user.id, wallet_balance: nextBal }, { onConflict: "id" });
+
+      if (updateErr) throw updateErr;
+    },
+    onSuccess: async () => {
+      await refresh();
+      void qc.invalidateQueries({ queryKey: ["claimed-rewards"] });
       void qc.invalidateQueries({ queryKey: ["directory"] });
     },
   });

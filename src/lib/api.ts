@@ -842,18 +842,26 @@ export async function processReferralRedemption(refereeUserId: string, rawCode: 
   // 1. Fetch referee profile to verify eligibility
   const { data: refereeProf, error: refereeErr } = await supabase
     .from("profiles")
-    .select("id, email, wallet_balance, referred_by, referral_code")
+    .select("id, email, wallet_balance, referral_code")
     .eq("id", refereeUserId)
     .maybeSingle();
 
   if (refereeErr) throw new Error(refereeErr.message);
 
-  if (refereeProf?.referred_by) {
-    throw new Error("You have already redeemed a referral code.");
-  }
-
   if (refereeProf?.referral_code?.toUpperCase() === cleanCode) {
     throw new Error("You cannot redeem your own referral code.");
+  }
+
+  // 2. Check if user has ALREADY redeemed THIS specific referral code before
+  const { data: existingClaim } = await supabase
+    .from("referrals")
+    .select("id")
+    .eq("referee_id", refereeUserId)
+    .eq("code", cleanCode)
+    .maybeSingle();
+
+  if (existingClaim) {
+    throw new Error(`You have already redeemed referral code ${cleanCode}. Try a different code!`);
   }
 
   // 2. Find referrer by code in database

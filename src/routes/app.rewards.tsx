@@ -181,35 +181,29 @@ function RewardsPage() {
             </p>
           </div>
 
-          {/* Redeem Code Form */}
-          {profile?.referred_by ? (
-            <div className="surface-card rounded-2xl p-5 border border-emerald-500/30 bg-emerald-500/5 flex flex-col justify-center space-y-1">
-              <div className="flex items-center gap-2 text-emerald-600 font-semibold text-xs">
-                <Check className="size-4 text-emerald-500" /> Referral Code Claimed
-              </div>
-              <p className="text-xs text-muted-foreground">
-                You redeemed code <code className="font-mono font-bold text-foreground select-all">{profile.referred_by}</code> (+₹25 bonus added to your campus wallet).
-              </p>
+          {/* Redeem Code Form - Always open for new referral codes */}
+          <div className="surface-card rounded-2xl p-5 border border-border">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-foreground">Redeem a Friend's Referral Code</p>
+              <Badge variant="outline" className="text-[10px] text-emerald-500 border-emerald-500/30 bg-emerald-500/10">
+                +₹25 Per New Code
+              </Badge>
             </div>
-          ) : (
-            <div className="surface-card rounded-2xl p-5 border border-border">
-              <p className="text-xs font-medium text-muted-foreground">Have a Friend's Referral Code?</p>
-              <form onSubmit={handleRedeem} className="mt-2 flex gap-2">
-                <Input
-                  value={inputCode}
-                  onChange={(e) => setInputCode(e.target.value)}
-                  placeholder="Enter referral code (e.g. CAMPUS-9X42)"
-                  className="rounded-xl font-mono text-xs uppercase"
-                />
-                <Button type="submit" disabled={redeemCode.isPending || !inputCode.trim()} className="rounded-xl shrink-0 text-xs gap-1">
-                  {redeemCode.isPending ? "Redeeming…" : "Redeem +₹25"}
-                </Button>
-              </form>
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                Get an instant +₹25 welcome bonus when you enter a friend's valid referral code.
-              </p>
-            </div>
-          )}
+            <form onSubmit={handleRedeem} className="mt-3 flex gap-2">
+              <Input
+                value={inputCode}
+                onChange={(e) => setInputCode(e.target.value)}
+                placeholder="Enter referral code (e.g. CAMPUS-9X42)"
+                className="rounded-xl font-mono text-xs uppercase"
+              />
+              <Button type="submit" disabled={redeemCode.isPending || !inputCode.trim()} className="rounded-xl shrink-0 text-xs gap-1">
+                {redeemCode.isPending ? "Redeeming…" : "Redeem +₹25"}
+              </Button>
+            </form>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Have a friend's code? Enter any valid, new referral code to instantly claim +₹25 to your wallet!
+            </p>
+          </div>
         </div>
 
         {/* Referrals History List */}

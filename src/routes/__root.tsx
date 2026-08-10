@@ -122,11 +122,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "application-name", content: "CanteenOS" },
       { name: "twitter:title", content: "CanteenOS — Smart Canteen Ordering" },
       { name: "twitter:description", content: "CanteenOS is the operating system for campus canteens: student ordering, kitchen kanban and admin analytics in one platform." },
-      { property: "og:image", content: "https://canteenos-hub.vercel.app/referral-banner.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:type", content: "image/png" },
-      { name: "twitter:image", content: "https://canteenos-hub.vercel.app/referral-banner.png" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70cedb0b-2a53-4a63-9001-6686a0d791cc/id-preview-f828f0a0--2e9ec8af-7b5f-4ec7-86d2-b8ff78004adc.lovable.app-1785403081802.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70cedb0b-2a53-4a63-9001-6686a0d791cc/id-preview-f828f0a0--2e9ec8af-7b5f-4ec7-86d2-b8ff78004adc.lovable.app-1785403081802.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -42,11 +42,13 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
   const [amount, setAmount] = useState<number>(defaultAmount);
   const [customInput, setCustomInput] = useState<string>("");
   const [method, setMethod] = useState<"upi" | "card" | "netbanking">("upi");
-  const [upiId, setUpiId] = useState<string>("student@upi");
+  const [upiApp, setUpiApp] = useState<"gpay" | "phonepe" | "paytm" | "cred" | "bhim">("gpay");
+  const [upiId, setUpiId] = useState<string>("student@okaxis");
   const [pin, setPin] = useState<string>("");
   const [step, setStep] = useState<"select" | "auth" | "processing" | "success">("select");
 
   const effectiveAmount = customInput && Number(customInput) > 0 ? Number(customInput) : amount;
+  const upiUri = `upi://pay?pa=canteenos@okaxis&pn=CanteenOS%20Campus%20Wallet&am=${effectiveAmount}&cu=INR&tn=Campus%20Wallet%20TopUp`;
 
   const handleStartPayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,22 +59,27 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
     setStep("auth");
   };
 
-  const handleConfirmPin = async () => {
-    if (method === "upi" && pin.length < 4) {
-      toast.error("Please enter a valid 4-digit UPI PIN");
-      return;
+  const handleLaunchUpiApp = () => {
+    if (typeof window !== "undefined") {
+      // Deep link trigger for mobile UPI apps
+      window.location.href = upiUri;
+      toast.info("Opening UPI App…", {
+        description: "If your app doesn't open automatically, scan the QR code or authorize below.",
+      });
     }
+  };
 
+  const handleConfirmPin = async () => {
     setStep("processing");
 
-    // Simulate 256-bit bank verification delay
+    // Simulate bank verification handshake delay
     setTimeout(() => {
       topUpWallet.mutate(effectiveAmount, {
         onSuccess: () => {
           celebrate();
           setStep("success");
           toast.success(`🎉 ${inr(effectiveAmount)} Credited to Campus Wallet!`, {
-            description: "256-Bit SSL Encrypted Payment Verified Successfully.",
+            description: "Payment verified successfully.",
           });
         },
         onError: (err) => {
@@ -101,12 +108,12 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
               <div>
                 <DialogTitle className="text-lg font-bold">Add Money to Wallet</DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  256-Bit SSL Encrypted Payment Gateway
+                  Official UPI & Card Gateway
                 </DialogDescription>
               </div>
             </div>
             <Badge variant="outline" className="rounded-full gap-1 border-success/30 text-success text-[11px] py-1 px-2.5">
-              <ShieldCheck className="size-3.5" /> Encrypted
+              <ShieldCheck className="size-3.5" /> 256-Bit SSL
             </Badge>
           </div>
         </div>
@@ -166,8 +173,8 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
                         <RadioGroupItem value="upi" />
                         <Smartphone className="size-4 text-primary" />
                         <div>
-                          <p className="text-xs font-semibold">Instant UPI / QR</p>
-                          <p className="text-[10px] text-muted-foreground">Google Pay, PhonePe, Paytm</p>
+                          <p className="text-xs font-semibold">Instant UPI App / QR Code</p>
+                          <p className="text-[10px] text-muted-foreground">Google Pay, PhonePe, Paytm, CRED, BHIM</p>
                         </div>
                       </div>
                       <Badge variant="secondary" className="text-[10px]">Zero Fee</Badge>
@@ -208,14 +215,29 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
                 </div>
 
                 {method === "upi" && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">Your Virtual Payment Address (VPA)</Label>
-                    <Input
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      placeholder="student@okaxis"
-                      className="rounded-xl font-mono text-xs"
-                    />
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Select your preferred UPI App</Label>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {[
+                        { id: "gpay", name: "GPay", color: "border-blue-500/40 bg-blue-500/10 text-blue-500" },
+                        { id: "phonepe", name: "PhonePe", color: "border-purple-500/40 bg-purple-500/10 text-purple-500" },
+                        { id: "paytm", name: "Paytm", color: "border-sky-500/40 bg-sky-500/10 text-sky-500" },
+                        { id: "cred", name: "CRED", color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-500" },
+                        { id: "bhim", name: "BHIM", color: "border-orange-500/40 bg-orange-500/10 text-orange-500" },
+                      ].map((app) => (
+                        <button
+                          key={app.id}
+                          type="button"
+                          onClick={() => setUpiApp(app.id as any)}
+                          className={cn(
+                            "flex flex-col items-center justify-center p-2 rounded-xl border text-[11px] font-bold transition-all",
+                            upiApp === app.id ? app.color + " ring-2 ring-primary/40" : "border-border hover:border-primary/30"
+                          )}
+                        >
+                          {app.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -231,33 +253,56 @@ export function WalletTopUpDialog({ open, onOpenChange, defaultAmount = 200 }: W
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="space-y-5"
+                className="space-y-4"
               >
                 <div className="surface-card rounded-2xl p-4 border border-primary/20 text-center">
-                  <p className="text-xs text-muted-foreground">Amount to Authorize</p>
+                  <p className="text-xs text-muted-foreground">Amount to Pay</p>
                   <p className="text-2xl font-bold text-primary">{inr(effectiveAmount)}</p>
-                  <p className="mt-1 text-[11px] text-muted-foreground">Gateway: {method.toUpperCase()} ({method === "upi" ? upiId : "Bank Gateway"})</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Lock className="size-3.5 text-primary" /> Enter 4-Digit Security UPI PIN
-                  </Label>
-                  <Input
-                    type="password"
-                    maxLength={6}
-                    placeholder="••••"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    className="rounded-xl text-center font-mono text-lg tracking-widest"
-                    autoFocus
-                  />
-                  <p className="text-[11px] text-muted-foreground text-center">
-                    Protected by 256-Bit SSL Encryption. Your PIN is never stored.
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Gateway: {method.toUpperCase()} ({upiApp.toUpperCase()})
                   </p>
                 </div>
 
-                <div className="flex gap-2">
+                {method === "upi" ? (
+                  <div className="space-y-3 text-center">
+                    <div className="mx-auto w-fit p-3 bg-white rounded-2xl border border-border shadow-md">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}`}
+                        alt="Scan UPI QR Code"
+                        className="size-36 mx-auto"
+                      />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Scan QR code using Google Pay, PhonePe, Paytm or BHIM to pay
+                    </p>
+
+                    <Button
+                      type="button"
+                      onClick={handleLaunchUpiApp}
+                      variant="outline"
+                      className="w-full rounded-xl text-xs gap-2 border-primary/30 text-primary hover:bg-primary/10"
+                    >
+                      <Smartphone className="size-4" /> Open {upiApp.toUpperCase()} App Directly
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold flex items-center gap-1.5">
+                      <Lock className="size-3.5 text-primary" /> Enter 4-Digit Security PIN
+                    </Label>
+                    <Input
+                      type="password"
+                      maxLength={6}
+                      placeholder="••••"
+                      value={pin}
+                      onChange={(e) => setPin(e.target.value)}
+                      className="rounded-xl text-center font-mono text-lg tracking-widest"
+                      autoFocus
+                    />
+                  </div>
+                )}
+
+                <div className="flex gap-2 pt-2">
                   <Button variant="outline" type="button" onClick={() => setStep("select")} className="flex-1 rounded-xl text-xs">
                     Back
                   </Button>

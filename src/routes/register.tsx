@@ -22,11 +22,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { homeForRole } from "@/hooks/use-auth";
 import type { Role } from "@/types";
 
+import { processReferralRedemption } from "@/lib/api";
 import { z } from "zod";
 import { Check } from "lucide-react";
 
 const registerSearchSchema = z.object({
   plan: z.string().optional(),
+  ref: z.string().optional(),
+  referral: z.string().optional(),
 });
 
 export const Route = createFileRoute("/register")({
@@ -80,7 +83,10 @@ function RegisterPage() {
   const planKey = (search?.plan ?? "starter").toLowerCase();
   const selectedPlan = PLAN_DETAILS[planKey] ?? PLAN_DETAILS.starter;
 
+  const initialRef = (search?.ref ?? search?.referral ?? "").trim().toUpperCase();
+
   const [form, setForm] = useState({ name: "", email: "", studentId: "", password: "" });
+  const [refCode, setRefCode] = useState(initialRef);
   const [role, setRole] = useState(planKey === "campus" || planKey === "enterprise" ? "admin" : "student");
   const [show, setShow] = useState(false);
   const [agree, setAgree] = useState(true);
@@ -104,6 +110,8 @@ function RegisterPage() {
       return;
     }
 
+    const cleanRef = refCode.trim().toUpperCase();
+
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email: result.data.email,
@@ -114,6 +122,7 @@ function RegisterPage() {
           full_name: result.data.name,
           student_id: result.data.studentId,
           role,
+          referred_by: cleanRef || undefined,
         },
       },
     });
@@ -125,9 +134,6 @@ function RegisterPage() {
       return;
     }
 
-    // For an existing email, the auth service intentionally returns a generic
-    // success response. Do not claim a second account was created or navigate
-    // into a protected workspace without a session.
     if (data.user && data.user.identities?.length === 0) {
       clearRateLimit("register");
       toast.info("This email is already registered", {
@@ -143,7 +149,6 @@ function RegisterPage() {
 
     clearRateLimit("register");
     if (!data.session) {
-      // Auto-confirm is on, so no verification step: sign the new account in directly.
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: result.data.email,
         password: result.data.password,
@@ -155,6 +160,17 @@ function RegisterPage() {
       }
     }
 
+    const currentUserId = data.user?.id ?? (await supabase.auth.getUser()).data.user?.id;
+    if (currentUserId && cleanRef && role === "student") {
+      try {
+        await processReferralRedemption(currentUserId, cleanRef);
+        toast.success("🎉 Referral Bonus Claimed!", {
+          description: "+₹25 welcome bonus added to your campus wallet balance.",
+        });
+      } catch (err) {
+        console.warn("Auto-apply referral code on signup error:", err);
+      }
+    }
 
     toastSuccess("Account created", "Welcome to CanteenOS.");
     void navigate({ to: homeForRole(role as Role) });
@@ -229,6 +245,22 @@ function RegisterPage() {
             ) : null}
           </div>
         </div>
+
+        {role === "student" ? (
+          <div className="space-y-2">
+            <Label htmlFor="ref-code">Referral code (Optional)</Label>
+            <Input
+              id="ref-code"
+              value={refCode}
+              onChange={(e) => setRefCode(e.target.value.toUpperCase())}
+              placeholder="e.g. CAMPUS-3EDF1B"
+              className="rounded-xl font-mono uppercase text-xs"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Enter a friend's referral code to get +₹25 welcome bonus in your campus wallet.
+            </p>
+          </div>
+        ) : null}
 
         <div className="space-y-2">
           <Label htmlFor="role">I am joining as</Label>

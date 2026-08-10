@@ -835,6 +835,76 @@ export function useReferrals() {
   });
 }
 
+export async function processReferralRedemption(refereeUserId: string, rawCode: string) {
+  const cleanCode = rawCode.trim().toUpperCase();
+  if (!cleanCode) throw new Error("Enter a valid referral code.");
+
+  // 1. Fetch referee profile to verify eligibility
+  const { data: refereeProf, error: refereeErr } = await supabase
+    .from("profiles")
+    .select("id, email, wallet_balance, referred_by, referral_code")
+    .eq("id", refereeUserId)
+    .maybeSingle();
+
+  if (refereeErr) throw new Error(refereeErr.message);
+
+  if (refereeProf?.referred_by) {
+    throw new Error("You have already redeemed a referral code.");
+  }
+
+  if (refereeProf?.referral_code?.toUpperCase() === cleanCode) {
+    throw new Error("You cannot redeem your own referral code.");
+  }
+
+  // 2. Find referrer by code in database
+  const { data: referrerProf, error: refErr } = await supabase
+    .from("profiles")
+    .select("id, full_name, email, wallet_balance")
+    .eq("referral_code", cleanCode)
+    .maybeSingle();
+
+  if (refErr) throw new Error(refErr.message);
+
+  if (!referrerProf) {
+    throw new Error("Invalid referral code. Please check the code and try again.");
+  }
+
+  if (referrerProf.id === refereeUserId) {
+    throw new Error("You cannot redeem your own referral code.");
+  }
+
+  // 3. Process referral reward: +₹25 for referee, +₹50 for referrer
+  const refereeNextBal = Number(refereeProf?.wallet_balance ?? 100) + 25;
+  const referrerNextBal = Number(referrerProf.wallet_balance ?? 100) + 50;
+
+  // Update referee profile (set wallet_balance and set referred_by)
+  const { error: updateRefErr } = await supabase
+    .from("profiles")
+    .update({ wallet_balance: refereeNextBal, referred_by: cleanCode })
+    .eq("id", refereeUserId);
+
+  if (updateRefErr) throw new Error(updateRefErr.message);
+
+  // Update referrer profile (add +₹50)
+  await supabase
+    .from("profiles")
+    .update({ wallet_balance: referrerNextBal })
+    .eq("id", referrerProf.id);
+
+  // Insert referral record
+  await supabase.from("referrals").insert({
+    referrer_id: referrerProf.id,
+    referee_id: refereeUserId,
+    referee_name: refereeProf?.email?.split("@")[0] ?? "Campus Friend",
+    referee_email: refereeProf?.email ?? null,
+    code: cleanCode,
+    reward_amount: 50,
+    status: "completed",
+  });
+
+  return { referrerName: referrerProf.full_name ?? "your friend", cleanCode };
+}
+
 export function useRedeemReferralCode() {
   const qc = useQueryClient();
   const { user, roles, refresh } = useAuth();
@@ -846,46 +916,7 @@ export function useRedeemReferralCode() {
         throw new Error("Referral rewards are exclusive to student accounts.");
       }
 
-      const cleanCode = code.trim().toUpperCase();
-      if (!cleanCode) throw new Error("Enter a valid referral code.");
-
-      // Find referrer by code
-      const { data: referrerProf } = await supabase
-        .from("profiles")
-        .select("id, full_name, email, wallet_balance")
-        .eq("referral_code", cleanCode)
-        .maybeSingle();
-
-      const referrerId = referrerProf?.id;
-      if (referrerId === user.id) {
-        throw new Error("You cannot redeem your own referral code.");
-      }
-
-      const rewardAmount = 25;
-
-      // Credit referee (current user) +₹25
-      const { data: myProf } = await supabase
-        .from("profiles")
-        .select("wallet_balance")
-        .eq("id", user.id)
-        .maybeSingle();
-      const myNextBal = Number(myProf?.wallet_balance ?? 100) + rewardAmount;
-      await supabase.from("profiles").upsert({ id: user.id, wallet_balance: myNextBal, referred_by: cleanCode }, { onConflict: "id" });
-
-      // If referrer found in DB, credit referrer +₹50 and insert referral record
-      if (referrerId) {
-        const referrerNextBal = Number(referrerProf?.wallet_balance ?? 100) + 50;
-        await supabase.from("profiles").update({ wallet_balance: referrerNextBal }).eq("id", referrerId);
-        await supabase.from("referrals").insert({
-          referrer_id: referrerId,
-          referee_id: user.id,
-          referee_name: user.email?.split("@")[0] ?? "Campus Friend",
-          referee_email: user.email ?? null,
-          code: cleanCode,
-          reward_amount: 50,
-          status: "completed",
-        });
-      }
+      return await processReferralRedemption(user.id, code);
     },
     onSuccess: async () => {
       await refresh();

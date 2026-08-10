@@ -29,6 +29,7 @@ export interface Profile {
   status: string;
   wallet_balance: number;
   referral_code: string | null;
+  referred_by?: string | null;
 }
 
 interface AuthContextValue {
@@ -132,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       status: rawProfile?.status || "active",
       wallet_balance: Number(rawProfile?.wallet_balance ?? 100),
       referral_code: rawProfile?.referral_code || defaultRefCode,
+      referred_by: rawProfile?.referred_by || currentUser?.user_metadata?.referred_by || null,
     };
 
     // Auto-create/upsert user profile in DB if not created yet

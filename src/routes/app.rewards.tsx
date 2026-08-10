@@ -58,7 +58,7 @@ function RewardsPage() {
   };
 
   const shareWhatsapp = () => {
-    const text = `Hey! Skip long canteen queues with *CanteenOS* 🥪\n\nUse my code *${refCode}* when you register and we both get bonus wallet money! 💰\n\nSign up here 👇\n${shareUrl}`;
+    const text = `Hey! Skip long canteen queues with *CanteenOS*\n\nUse my code *${refCode}* when you register and we both get bonus wallet money!\n\nSign up here:\n${shareUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 

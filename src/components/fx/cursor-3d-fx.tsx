@@ -47,9 +47,11 @@ function drawGlitterStar(
 
 export function MouseCursor3DFX() {
   const [isPointerFine, setIsPointerFine] = useState(false);
+  const [isTouchActive, setIsTouchActive] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const touchStartPos = useRef<{ x: number; y: number; time: number } | null>(null);
 
   // Springs for smooth physics trailing outer ring
   const mouseX = useSpring(0, { stiffness: 400, damping: 28 });
@@ -157,27 +159,45 @@ export function MouseCursor3DFX() {
 
     const handleMouseUp = () => setIsClicking(false);
 
-    // Mobile Touch Handlers
+    // Mobile Touch Handlers - Match Laptop Circular Glow & Only Scatter Food on Tap/Click
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
       if (!touch) return;
+      setIsTouchActive(true);
       setDotPos({ x: touch.clientX, y: touch.clientY });
       mouseX.set(touch.clientX);
       mouseY.set(touch.clientY);
-      setIsClicking(true);
-      spawnBurst(touch.clientX, touch.clientY);
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       const touch = e.touches[0];
       if (!touch) return;
+      setIsTouchActive(true);
       setDotPos({ x: touch.clientX, y: touch.clientY });
       mouseX.set(touch.clientX);
       mouseY.set(touch.clientY);
-      spawnGlitter(touch.clientX, touch.clientY, 3);
+      spawnGlitter(touch.clientX, touch.clientY, 1);
     };
 
-    const handleTouchEnd = () => setIsClicking(false);
+    const handleTouchEnd = (e: TouchEvent) => {
+      setIsClicking(false);
+      if (touchStartPos.current) {
+        const elapsed = Date.now() - touchStartPos.current.time;
+        const touch = e.changedTouches[0];
+        if (touch && elapsed < 350) {
+          const dx = touch.clientX - touchStartPos.current.x;
+          const dy = touch.clientY - touchStartPos.current.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          // If tap/click occurs with minimal drag distance, trigger food scatter burst
+          if (dist < 20) {
+            setIsClicking(true);
+            spawnBurst(touch.clientX, touch.clientY);
+            setTimeout(() => setIsClicking(false), 200);
+          }
+        }
+      }
+    };
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
@@ -258,15 +278,15 @@ export function MouseCursor3DFX() {
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isPointerFine]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden select-none">
       {/* Glitter & Food Emoji Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />
 
-      {/* Reticle Dot & Outer Ring on fine pointer / desktop mouse */}
-      {isPointerFine ? (
+      {/* Reticle Dot & Circular Outer Ring on Desktop Mouse OR Active Mobile Touch */}
+      {(isPointerFine || isTouchActive) && dotPos.x > -50 ? (
         <>
           <motion.div
             style={{

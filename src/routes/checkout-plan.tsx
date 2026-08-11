@@ -98,9 +98,9 @@ function CheckoutPlanPage() {
   const [success, setSuccess] = useState(false);
 
   // Form State
-  const [name, setName] = useState("Omkar Narsale");
-  const [email, setEmail] = useState("omkar.narsale24@sakec.ac.in");
-  const [campus, setCampus] = useState("SAKEC Campus Canteen");
+  const [name, setName] = useState("Ranjit Patra");
+  const [email, setEmail] = useState("ranjitpatra2611@gmail.com");
+  const [campus, setCampus] = useState("Main Campus Canteen");
   const [phone, setPhone] = useState("+91 98765 43210");
   const [cardNumber, setCardNumber] = useState("4111 2222 3333 4444");
   const [cardExp, setCardExp] = useState("12/28");

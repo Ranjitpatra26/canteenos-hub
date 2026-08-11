@@ -137,7 +137,7 @@ function ContactPage() {
                   </span>
                   <div>
                     <p className="font-semibold text-foreground">HQ Address</p>
-                    <p className="text-muted-foreground">SAKEC Campus Tech Hub, Chembur, Mumbai 400088</p>
+                    <p className="text-muted-foreground">CanteenOS Tech Operations Hub, Chembur, Mumbai 400088</p>
                   </div>
                 </div>
               </div>
@@ -221,7 +221,7 @@ function ContactPage() {
                         id="cont-campus"
                         value={campus}
                         onChange={(e) => setCampus(e.target.value)}
-                        placeholder="VIT Vellore / SAKEC"
+                        placeholder="VIT Vellore / IIT Bombay"
                         className="rounded-xl"
                       />
                     </div>

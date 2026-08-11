@@ -41,7 +41,7 @@ export interface OrderReceiptOptions {
 }
 
 /**
- * Draws the signature CanteenOS header banner with logo badge and document header styling.
+ * Draws the signature CanteenOS header banner with official Chef Hat logo badge and document header styling.
  */
 export function drawCanteenOSHeader(
   doc: jsPDF,
@@ -54,49 +54,53 @@ export function drawCanteenOSHeader(
 ) {
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Dark slate top header bar
-  doc.setFillColor(15, 23, 42); // #0F172A
-  doc.rect(0, 0, pageWidth, 56, "F");
+  // Dark slate top header bar (#0F172A)
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 58, "F");
 
-  // Lime green top accent line
-  doc.setFillColor(132, 204, 22); // #84CC16
+  // Vibrant Lime Green top accent bar (#84CC16)
+  doc.setFillColor(132, 204, 22);
   doc.rect(0, 0, pageWidth, 4, "F");
 
-  // Logo Badge Container
-  doc.setFillColor(132, 204, 22); // #84CC16 lime badge
-  doc.roundedRect(16, 12, 32, 32, 6, 6, "F");
-
-  // Stylized CanteenOS Emblem inside logo badge
-  doc.setFillColor(15, 23, 42);
-  doc.circle(32, 28, 9, "F");
+  // Logo Badge Container (Lime Green #84CC16)
   doc.setFillColor(132, 204, 22);
-  doc.circle(32, 28, 5, "F");
-  doc.setFillColor(132, 204, 22);
-  doc.rect(30, 22, 9, 8, "F");
-  doc.setFillColor(15, 23, 42);
-  doc.circle(32, 27, 2, "F");
+  doc.roundedRect(16, 12, 34, 34, 7, 7, "F");
 
-  // Brand Typography
+  // Official Chef Hat emblem inside logo badge (Dark Slate #0F172A)
+  doc.setFillColor(15, 23, 42);
+  
+  // Chef hat crown puff circles
+  doc.circle(33, 23.5, 5.5, "F"); // Center dome
+  doc.circle(28.5, 25.5, 4.2, "F"); // Left dome
+  doc.circle(37.5, 25.5, 4.2, "F"); // Right dome
+
+  // Chef hat crown body rectangle
+  doc.rect(27.5, 25.5, 11, 7, "F");
+
+  // Chef hat base band with small rounded corners
+  doc.roundedRect(26.5, 32.5, 13, 4, 1, 1, "F");
+
+  // Brand Name Typography
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(255, 255, 255);
-  doc.text("CanteenOS", 56, 27);
+  doc.text("CanteenOS", 58, 28);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
   doc.setTextColor(132, 204, 22); // Lime accent subhead
-  doc.text("ENTERPRISE CAMPUS DINING PLATFORM", 56, 37);
+  doc.text("ENTERPRISE CAMPUS DINING PLATFORM", 58, 38);
 
   // Document Title on Right
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
+  doc.setFontSize(11);
   doc.setTextColor(255, 255, 255);
   doc.text(opts.title.toUpperCase(), pageWidth - 16, 25, { align: "right" });
 
   if (opts.subtitle || opts.docRef) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
-    doc.setTextColor(156, 163, 175); // #9CA3AF
+    doc.setTextColor(156, 163, 175);
     const sub = [opts.subtitle, opts.docRef].filter(Boolean).join(" · ");
     doc.text(sub, pageWidth - 16, 36, { align: "right" });
   }
@@ -106,15 +110,15 @@ export function drawCanteenOSHeader(
     doc.setFontSize(7);
     doc.setFillColor(34, 197, 94); // Green badge
     const badgeWidth = doc.getTextWidth(opts.badgeText) + 12;
-    doc.roundedRect(pageWidth - 16 - badgeWidth, 42, badgeWidth, 10, 3, 3, "F");
+    doc.roundedRect(pageWidth - 16 - badgeWidth, 43, badgeWidth, 10, 3, 3, "F");
     doc.setTextColor(255, 255, 255);
-    doc.text(opts.badgeText, pageWidth - 16 - badgeWidth / 2, 49, { align: "center" });
+    doc.text(opts.badgeText, pageWidth - 16 - badgeWidth / 2, 50, { align: "center" });
   }
 
   // Header bottom border
   doc.setDrawColor(229, 231, 235);
   doc.setLineWidth(0.75);
-  doc.line(16, 62, pageWidth - 16, 62);
+  doc.line(16, 64, pageWidth - 16, 64);
 }
 
 /**
@@ -129,13 +133,13 @@ export function drawCanteenOSFooter(doc: jsPDF, currentPage: number, totalPages:
   doc.setLineWidth(0.5);
   doc.line(16, pageHeight - 24, pageWidth - 16, pageHeight - 24);
 
-  // Footer text
+  // Footer text without any mention of SAKEC
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  doc.setTextColor(107, 114, 128); // #6B7280
+  doc.setTextColor(107, 114, 128);
 
   doc.text(
-    "CanteenOS™ Enterprise Platform · SAKEC Campus Tech Hub, Chembur, Mumbai 400088 · ranjitpatra2611@gmail.com",
+    "CanteenOS™ Enterprise Platform · Tech Operations Hub, Chembur, Mumbai 400088 · ranjitpatra2611@gmail.com",
     16,
     pageHeight - 12
   );
@@ -162,7 +166,6 @@ export function drawSectionHeading(doc: jsPDF, y: number, text: string): number 
 
 /**
  * Generates the full, comprehensive Enterprise Security & Compliance Whitepaper PDF.
- * Uses dynamic import so jsPDF is never loaded on SSR server.
  */
 export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions): Promise<jsPDF> {
   const { default: JsPDF } = await import("jspdf");
@@ -187,7 +190,7 @@ export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions
   let y = 74;
 
   // Metadata Card Box
-  doc.setFillColor(248, 250, 252); // #F8FAFC
+  doc.setFillColor(248, 250, 252);
   doc.setDrawColor(226, 232, 240);
   doc.roundedRect(16, y, 563, 42, 6, 6, "FD");
 
@@ -205,7 +208,7 @@ export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions
   y += 54;
 
   // Executive Summary Callout Box
-  doc.setFillColor(236, 253, 245); // Light mint green fill
+  doc.setFillColor(236, 253, 245);
   doc.setDrawColor(167, 243, 208);
   doc.roundedRect(16, y, 563, 48, 6, 6, "FD");
 
@@ -345,7 +348,7 @@ export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions
   y = drawSectionHeading(doc, y, "6. Official Operations & Escalation Contacts");
 
   // Contact Box
-  doc.setFillColor(241, 245, 249); // #F1F5F9
+  doc.setFillColor(241, 245, 249);
   doc.setDrawColor(203, 213, 225);
   doc.roundedRect(16, y, 563, 68, 6, 6, "FD");
 
@@ -361,9 +364,9 @@ export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions
   doc.text("• Licensing & Enterprise Desk: sales@canteenos.com", 26, y + 42);
   doc.text("• Helpline & Campus IT Support: +91 (022) 2854-9000 (Mon–Sat, 9 AM – 7 PM)", 26, y + 54);
 
-  doc.text("• Campus HQ Address:", 330, y + 30);
+  doc.text("• Operations HQ Address:", 330, y + 30);
   doc.setFont("helvetica", "bold");
-  doc.text("SAKEC Campus Tech Hub, Chembur,", 330, y + 42);
+  doc.text("CanteenOS Tech Operations Hub, Chembur,", 330, y + 42);
   doc.text("Mumbai, Maharashtra 400088", 330, y + 54);
 
   // Draw Footers on both pages
@@ -376,7 +379,6 @@ export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions
 
 /**
  * Generates a branded Tax Invoice PDF for subscription checkouts.
- * Uses dynamic imports so jsPDF is never loaded on SSR server.
  */
 export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF> {
   const { default: JsPDF } = await import("jspdf");
@@ -413,7 +415,7 @@ export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF
   doc.setFontSize(8);
   doc.setTextColor(51, 65, 85);
   doc.text("CanteenOS Technologies India Pvt Ltd", 26, y + 30);
-  doc.text("SAKEC Campus Tech Hub, Chembur", 26, y + 42);
+  doc.text("CanteenOS Tech Operations Hub, Chembur", 26, y + 42);
   doc.text("Mumbai, Maharashtra 400088", 26, y + 54);
   doc.text("GSTIN: 27AAACC1234D1Z5 · SAC: 998313", 26, y + 66);
 
@@ -465,7 +467,7 @@ export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF
   y = finalY + 16;
 
   // Totals Summary Box
-  doc.setFillColor(236, 253, 245); // Light mint green fill
+  doc.setFillColor(236, 253, 245);
   doc.setDrawColor(167, 243, 208);
   doc.roundedRect(330, y, 249, 74, 6, 6, "FD");
 
@@ -483,7 +485,7 @@ export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.setTextColor(16, 185, 129); // Vibrant emerald green
+  doc.setTextColor(16, 185, 129);
   doc.text("Total Paid:", 342, y + 60);
   doc.text(`INR ${opts.totalAmount.toLocaleString("en-IN")}`, 565, y + 60, { align: "right" });
 
@@ -504,7 +506,6 @@ export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF
 
 /**
  * Generates a branded Student Order Receipt PDF.
- * Uses dynamic imports so jsPDF is never loaded on SSR server.
  */
 export async function generateOrderReceiptPDF(opts: OrderReceiptOptions): Promise<jsPDF> {
   const { default: JsPDF } = await import("jspdf");

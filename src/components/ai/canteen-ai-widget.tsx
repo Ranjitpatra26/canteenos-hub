@@ -308,15 +308,20 @@ export function CanteenAiWidget() {
                 className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 title="Configure AI API key (Gemini, Groq, xAI)"
                 onClick={() => {
-                  const current = getGrokApiKey();
+                  let current = getGrokApiKey();
+                  if (current.startsWith("--") || current.includes(" ") || current.includes("!")) {
+                    current = "";
+                    setGrokApiKey("");
+                  }
                   const val = prompt(
                     "Enter your AI API Key (Gemini 'AIza...', Groq 'gsk_...', or xAI Grok):\n(Leave empty to use built-in smart local mode)",
                     current,
                   );
                   if (val !== null) {
-                    setGrokApiKey(val.trim());
+                    const cleaned = val.replace(/^[-\s]+/, "").trim();
+                    setGrokApiKey(cleaned);
                     toast.success(
-                      val.trim() ? "AI API key saved! 🚀" : "Switched to built-in smart mode",
+                      cleaned ? "AI API key saved! 🚀" : "Switched to built-in smart mode",
                     );
                   }
                 }}

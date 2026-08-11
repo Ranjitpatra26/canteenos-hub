@@ -470,16 +470,31 @@ export function getGrokApiKey(): string {
     (import.meta as any).env?.VITE_GROQ_API_KEY ||
     (import.meta as any).env?.VITE_GROK_API_KEY ||
     "";
-  if (envKey) return envKey;
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("canteen_grok_api_key") || "";
+  
+  let key = envKey;
+  if (!key && typeof window !== "undefined") {
+    key = localStorage.getItem("canteen_grok_api_key") || "";
   }
-  return "";
+
+  // Wipes malformed/test keys starting with dashes or containing invalid characters
+  if (key.startsWith("--") || key.includes(" ") || key.includes("!")) {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("canteen_grok_api_key");
+    }
+    return "";
+  }
+
+  return key.trim();
 }
 
 export function setGrokApiKey(key: string) {
   if (typeof window !== "undefined") {
-    localStorage.setItem("canteen_grok_api_key", key);
+    const cleanKey = key.replace(/^[-\s]+/, "").trim();
+    if (!cleanKey || cleanKey.startsWith("--") || cleanKey.includes(" ") || cleanKey.includes("!")) {
+      localStorage.removeItem("canteen_grok_api_key");
+    } else {
+      localStorage.setItem("canteen_grok_api_key", cleanKey);
+    }
   }
 }
 

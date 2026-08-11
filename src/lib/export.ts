@@ -83,33 +83,48 @@ export async function exportPdf(payload: ExportPayload) {
   const data = fallback(payload);
   const { default: JsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
+  const { drawCanteenOSHeader, drawCanteenOSFooter } = await import("@/lib/pdf-branding");
 
   const doc = new JsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-  doc.setFontSize(18);
-  doc.text(data.title, 40, 44);
-  doc.setFontSize(10);
-  doc.setTextColor(120);
-  doc.text(`CanteenOS · generated ${data.generatedAt}`, 40, 62);
+  
+  drawCanteenOSHeader(doc, {
+    title: data.title,
+    subtitle: `Generated: ${data.generatedAt}`,
+    badgeText: "CONFIDENTIAL REPORT",
+  });
 
   let y = 84;
   data.sections.forEach((section) => {
-    doc.setFontSize(12);
-    doc.setTextColor(30);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(15, 23, 42);
     doc.text(section.title, 40, y);
     autoTable(doc, {
       startY: y + 8,
       head: [section.columns],
       body: section.rows,
-      styles: { fontSize: 8, cellPadding: 4, overflow: "linebreak" },
-      headStyles: { fillColor: [24, 24, 27], textColor: 255 },
+      styles: { fontSize: 8, cellPadding: 5, overflow: "linebreak", font: "helvetica" },
+      headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
       margin: { left: 40, right: 40 },
     });
     y = ((doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y) + 30;
     if (y > doc.internal.pageSize.getHeight() - 80) {
       doc.addPage();
-      y = 60;
+      drawCanteenOSHeader(doc, {
+        title: data.title,
+        subtitle: `Generated: ${data.generatedAt}`,
+        badgeText: "CONFIDENTIAL REPORT",
+      });
+      y = 84;
     }
   });
+
+  const pageCount = (doc.internal as unknown as { getNumberOfPages: () => number }).getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    drawCanteenOSFooter(doc, i, pageCount);
+  }
 
   doc.save(`${slug(data.title)}.pdf`);
 }

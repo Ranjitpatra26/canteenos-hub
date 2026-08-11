@@ -25,7 +25,7 @@ import {
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { generateSecurityWhitepaperPDF } from "@/lib/pdf-branding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -575,44 +575,14 @@ export function Security() {
                   className="flex-1 rounded-xl gap-2"
                   onClick={() => {
                     try {
-                      const doc = new jsPDF();
-                      doc.setFontSize(22);
-                      doc.setTextColor(132, 204, 22);
-                      doc.text("CanteenOS — Security Overview Report", 20, 25);
-                      doc.setFontSize(10);
-                      doc.setTextColor(100);
-                      doc.text(`Document Ref: COS-SEC-2026 · Date: ${new Date().toLocaleDateString()}`, 20, 34);
-                      doc.setLineWidth(0.5);
-                      doc.setDrawColor(200);
-                      doc.line(20, 40, 190, 40);
-
-                      doc.setFontSize(12);
-                      doc.setTextColor(0);
-                      doc.text("1. Data Architecture & Row-Level Security", 20, 52);
-                      doc.setFontSize(10);
-                      doc.setTextColor(80);
-                      doc.text("• Database: Supabase Postgres with active Row-Level Security (RLS) policies.", 24, 60);
-                      doc.text("• Encryption in Transit: TLS 1.3, HSTS preloaded, HTTP/2 enforcement.", 24, 67);
-                      doc.text("• At-Rest Protection: AES-256 block encryption on database volumes.", 24, 74);
-
-                      doc.setFontSize(12);
-                      doc.setTextColor(0);
-                      doc.text("2. Administrative Audit Trail", 20, 88);
-                      doc.setFontSize(10);
-                      doc.setTextColor(80);
-                      doc.text("• All refunds, role modifications, and menu edits logged with actor ID.", 24, 96);
-
-                      doc.setFontSize(12);
-                      doc.setTextColor(0);
-                      doc.text("3. IT & Security Contact", 20, 112);
-                      doc.setFontSize(10);
-                      doc.setTextColor(80);
-                      doc.text("• Lead Admin: Ranjit Patra (ranjitpatra2611@gmail.com)", 24, 120);
-
+                      const doc = generateSecurityWhitepaperPDF({
+                        authorName: "Ranjit Patra",
+                        authorEmail: "ranjitpatra2611@gmail.com",
+                      });
                       doc.save("CanteenOS-Security-Compliance-Report.pdf");
                       toast.success("Security Overview PDF downloaded!");
                     } catch {
-                      toast.success("Security Overview downloaded.");
+                      toast.error("Could not generate Security Whitepaper PDF.");
                     }
                     setSecurityOpen(false);
                   }}

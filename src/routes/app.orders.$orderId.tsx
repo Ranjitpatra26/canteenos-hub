@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { useOrder, useRealtimeOrders } from "@/lib/api";
-import { Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { clockTime, inr, shortDate } from "@/lib/format";
 import { foodImageById } from "@/lib/food-images";
+import { generateOrderReceiptPDF } from "@/lib/pdf-branding";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/orders/$orderId")({
   head: () => ({
@@ -39,6 +41,30 @@ function OrderDetail() {
   useRealtimeOrders();
   const { data: order, isLoading } = useOrder(orderId);
 
+  const downloadReceipt = () => {
+    if (!order) return;
+    try {
+      const doc = generateOrderReceiptPDF({
+        orderId: order.id,
+        code: order.code,
+        placedAt: order.placedAt,
+        status: order.status,
+        counter: order.counter,
+        method: order.method,
+        paymentMethod: order.paymentMethod,
+        subtotal: order.subtotal,
+        gst: order.gst,
+        fee: order.fee,
+        total: order.total,
+        lines: order.lines,
+      });
+      doc.save(`CanteenOS-Receipt-${order.code}.pdf`);
+      toast.success("Order Receipt PDF downloaded!");
+    } catch {
+      toast.error("Could not generate PDF receipt.");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -69,7 +95,15 @@ function OrderDetail() {
           { label: "Orders", to: "/app/orders" },
           { label: order.code },
         ]}
-        actions={<StatusBadge status={order.status} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={order.status} />
+            <Button variant="outline" size="sm" onClick={downloadReceipt} className="gap-1.5 rounded-xl">
+              <Download className="size-3.5" />
+              Receipt PDF
+            </Button>
+          </div>
+        }
       />
 
       <div className="surface-card p-5">

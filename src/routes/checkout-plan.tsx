@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
-import jsPDF from "jspdf";
+import { generateTaxInvoicePDF } from "@/lib/pdf-branding";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,44 +112,18 @@ function CheckoutPlanPage() {
 
   const downloadInvoice = () => {
     try {
-      const doc = new jsPDF();
-      doc.setFontSize(20);
-      doc.setTextColor(132, 204, 22); // Primary green
-      doc.text("CanteenOS — Tax Invoice", 20, 25);
-
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`Invoice No: COS-INV-${Math.floor(100000 + Math.random() * 900000)}`, 20, 35);
-      doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 42);
-
-      doc.setLineWidth(0.5);
-      doc.setDrawColor(200);
-      doc.line(20, 48, 190, 48);
-
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text("Customer Details:", 20, 58);
-      doc.setFontSize(10);
-      doc.text(`Name: ${name}`, 20, 66);
-      doc.text(`Campus / Canteen: ${campus}`, 20, 73);
-      doc.text(`Email: ${email}`, 20, 80);
-      doc.text(`Phone: ${phone}`, 20, 87);
-
-      doc.setFontSize(12);
-      doc.text("Order Summary:", 20, 100);
-      doc.setFontSize(10);
-      doc.text(`Plan: ${plan.name} (${billingCycle.toUpperCase()})`, 20, 108);
-      doc.text(`Base Amount: INR ${basePrice.toLocaleString("en-IN")}`, 20, 115);
-      doc.text(`GST (18%): INR ${tax.toLocaleString("en-IN")}`, 20, 122);
-      doc.setFontSize(12);
-      doc.setTextColor(34, 197, 94);
-      doc.text(`Total Paid: INR ${totalAmount.toLocaleString("en-IN")}`, 20, 134);
-
-      doc.setFontSize(10);
-      doc.setTextColor(120);
-      doc.text("Status: PAID (Simulated Test Transaction)", 20, 146);
-      doc.text("Thank you for choosing CanteenOS!", 20, 160);
-
+      const doc = generateTaxInvoicePDF({
+        planKey,
+        planName: plan.name,
+        billingCycle,
+        basePrice,
+        tax,
+        totalAmount,
+        customerName: name,
+        campus,
+        email,
+        phone,
+      });
       doc.save(`CanteenOS-Invoice-${planKey}.pdf`);
       toast.success("Tax Invoice PDF downloaded!");
     } catch {

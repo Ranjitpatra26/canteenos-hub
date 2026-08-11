@@ -15,11 +15,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
-import jsPDF from "jspdf";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { generateSecurityWhitepaperPDF } from "@/lib/pdf-branding";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -38,49 +34,14 @@ function ContactPage() {
 
   const downloadSecurityReport = () => {
     try {
-      const doc = new jsPDF();
-      doc.setFontSize(22);
-      doc.setTextColor(132, 204, 22);
-      doc.text("CanteenOS — Security & Compliance Report", 20, 25);
-
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`Document Version: 2026.2 · Published: ${new Date().toLocaleDateString()}`, 20, 34);
-
-      doc.setLineWidth(0.5);
-      doc.setDrawColor(200);
-      doc.line(20, 40, 190, 40);
-
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text("1. Data Architecture & Encryption", 20, 52);
-      doc.setFontSize(10);
-      doc.setTextColor(80);
-      doc.text("• Database: Supabase Postgres with active Row-Level Security (RLS) policies.", 24, 60);
-      doc.text("• Encryption in Transit: TLS 1.3, HSTS preloaded, HTTP/2 enforcement.", 24, 67);
-      doc.text("• At-Rest Protection: AES-256 block encryption on database volumes.", 24, 74);
-
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text("2. Identity & Access Control", 20, 88);
-      doc.setFontSize(10);
-      doc.setTextColor(80);
-      doc.text("• Role-Based Access Control (RBAC): Student, Kitchen Staff, and Admin roles.", 24, 96);
-      doc.text("• Audit Logging: All privilege changes and transactions recorded with actor ID.", 24, 103);
-      doc.text("• Session Management: Idle timeout at 30 minutes, secure token refresh.", 24, 110);
-
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text("3. Management & IT Contact", 20, 124);
-      doc.setFontSize(10);
-      doc.setTextColor(80);
-      doc.text("• Lead Administrator: Ranjit Patra (ranjitpatra2611@gmail.com)", 24, 132);
-      doc.text("• IT Desk: sales@canteenos.com · +91 (022) 2854-9000", 24, 139);
-
+      const doc = generateSecurityWhitepaperPDF({
+        authorName: "Ranjit Patra",
+        authorEmail: "ranjitpatra2611@gmail.com",
+      });
       doc.save("CanteenOS-Security-Compliance-Report.pdf");
-      toast.success("Security Overview PDF downloaded successfully!");
+      toast.success("Security & Compliance Whitepaper downloaded successfully!");
     } catch {
-      toast.error("Security Overview report generated.");
+      toast.error("Could not generate Security Whitepaper PDF.");
     }
   };
 

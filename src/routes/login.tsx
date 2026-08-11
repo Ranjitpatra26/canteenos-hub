@@ -196,6 +196,8 @@ function LoginPage() {
           <Input
             id="email"
             type="email"
+            autoCapitalize="none"
+            autoCorrect="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@campus.edu"

@@ -226,6 +226,8 @@ function RegisterPage() {
             <Input
               id="reg-email"
               type="email"
+              autoCapitalize="none"
+              autoCorrect="off"
               value={form.email}
               onChange={set("email")}
               placeholder="you@campus.edu"

@@ -86,6 +86,7 @@ export async function exportPdf(payload: ExportPayload) {
   const { drawCanteenOSHeader, drawCanteenOSFooter } = await import("@/lib/pdf-branding");
 
   const doc = new JsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+  const pageHeight = doc.internal.pageSize.getHeight();
   
   drawCanteenOSHeader(doc, {
     title: data.title,
@@ -94,22 +95,9 @@ export async function exportPdf(payload: ExportPayload) {
   });
 
   let y = 84;
-  data.sections.forEach((section) => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(15, 23, 42);
-    doc.text(section.title, 40, y);
-    autoTable(doc, {
-      startY: y + 8,
-      head: [section.columns],
-      body: section.rows,
-      styles: { fontSize: 8, cellPadding: 5, overflow: "linebreak", font: "helvetica" },
-      headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: "bold" },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-      margin: { left: 40, right: 40 },
-    });
-    y = ((doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y) + 30;
-    if (y > doc.internal.pageSize.getHeight() - 80) {
+  data.sections.forEach((section, index) => {
+    // Only add a new page if y position overflows AND there are remaining sections to draw
+    if (index > 0 && y > pageHeight - 100) {
       doc.addPage();
       drawCanteenOSHeader(doc, {
         title: data.title,
@@ -118,6 +106,31 @@ export async function exportPdf(payload: ExportPayload) {
       });
       y = 84;
     }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(15, 23, 42);
+    doc.text(section.title, 40, y);
+
+    autoTable(doc, {
+      startY: y + 8,
+      head: [section.columns],
+      body: section.rows,
+      styles: { fontSize: 8, cellPadding: 5, overflow: "linebreak", font: "helvetica" },
+      headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      margin: { left: 40, right: 40, top: 80, bottom: 40 },
+      didDrawPage: () => {
+        drawCanteenOSHeader(doc, {
+          title: data.title,
+          subtitle: `Generated: ${data.generatedAt}`,
+          badgeText: "CONFIDENTIAL REPORT",
+        });
+      },
+    });
+
+    const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y;
+    y = finalY + 28;
   });
 
   const pageCount = (doc.internal as unknown as { getNumberOfPages: () => number }).getNumberOfPages();

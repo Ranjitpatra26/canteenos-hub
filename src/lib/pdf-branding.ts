@@ -597,3 +597,189 @@ export async function generateOrderReceiptPDF(opts: OrderReceiptOptions): Promis
 
   return doc;
 }
+
+/**
+ * Generates a full 2-page branded CanteenOS Tech Stack Architecture Specification PDF.
+ */
+export async function generateTechStackPDF(): Promise<jsPDF> {
+  const { default: JsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+  const doc = new JsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+  const docRef = "COS-TECH-2026-V2";
+  const publishedDate = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const authorName = "Ranjit Patra";
+  const authorEmail = "ranjitpatra2611@gmail.com";
+
+  // PAGE 1
+  drawCanteenOSHeader(doc, {
+    title: "Technology Stack & Architecture",
+    subtitle: "Enterprise Technical Specifications & Infrastructure Guide",
+    docRef: `REF: ${docRef}`,
+    badgeText: "SYSTEM ARCHITECTURE · OFFICIAL",
+  });
+
+  let y = 74;
+
+  // Metadata Card Box
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.roundedRect(16, y, 563, 42, 6, 6, "FD");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(30, 41, 59);
+  doc.text("CANTEENOS TECH STACK ARCHITECTURE SPECIFICATION", 24, y + 14);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(71, 85, 105);
+  doc.text(`Published: ${publishedDate}  |  Doc ID: ${docRef}  |  Platform: Enterprise Edition`, 24, y + 28);
+  doc.text(`Lead Architect: ${authorName} (${authorEmail})`, 330, y + 28);
+
+  y += 52;
+
+  // Executive Summary Box
+  doc.setFillColor(236, 253, 245);
+  doc.setDrawColor(167, 243, 208);
+  doc.roundedRect(16, y, 563, 46, 6, 6, "FD");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.setTextColor(6, 95, 70);
+  doc.text("SYSTEM ARCHITECTURE OVERVIEW", 24, y + 15);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(4, 120, 87);
+  doc.text(
+    "CanteenOS is engineered as a high-concurrency, full-stack campus dining operating system leveraging modern reactive web technologies, serverless database architecture, real-time WebSockets, 3D WebGL visuals, and multi-LLM artificial intelligence engines. Below is the complete specifications matrix.",
+    24,
+    y + 27,
+    { maxWidth: 545 }
+  );
+
+  y += 58;
+
+  // Section 1: Core Frontend & SSR Runtime
+  y = drawSectionHeading(doc, y, "1. Core Frontend & Server-Side Rendering (SSR) Engine");
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Layer", "Technology", "Version", "Role & Usage in Codebase"]],
+    body: [
+      ["Framework", "React", "v19.2.0", "Core reactive UI rendering engine across student, kitchen & admin portals"],
+      ["Language", "TypeScript", "v5.8.3", "End-to-end static type safety, strict interfaces & contract validations"],
+      ["Routing Engine", "TanStack Start & Router", "v1.170", "Full-stack SSR/SSG file-based routing system (src/routes/)"],
+      ["Build & Bundler", "Vite 8 & Nitro 3", "v8.1.5", "Ultra-fast HMR dev server & edge prebuilt production bundle"],
+    ],
+    styles: { fontSize: 8, cellPadding: 6, font: "helvetica" },
+    headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    margin: { left: 16, right: 16 },
+  });
+
+  y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y + 100;
+  y += 16;
+
+  // Section 2: Backend & Database Layer
+  y = drawSectionHeading(doc, y, "2. Backend Infrastructure & Database Isolation Layer");
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Component", "Technology", "Role & Infrastructure Details"]],
+    body: [
+      ["Database", "Supabase PostgreSQL", "Serverless Postgres database storing orders, menus, inventory & user profiles"],
+      ["Security", "Row-Level Security (RLS)", "Database kernel-level multi-tenant isolation tied to JWT auth.uid() claims"],
+      ["Realtime Engine", "Supabase WebSockets", "Live event broadcasting for instant Kitchen Display System (KDS) order updates"],
+      ["Authentication", "Supabase Auth", "Secure JWT session management supporting Student, Kitchen & Admin roles"],
+    ],
+    styles: { fontSize: 8, cellPadding: 6, font: "helvetica" },
+    headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    margin: { left: 16, right: 16 },
+  });
+
+  // PAGE 2
+  doc.addPage();
+  drawCanteenOSHeader(doc, {
+    title: "Technology Stack & Architecture",
+    subtitle: "UI System, AI Engine & Infrastructure Specifications",
+    docRef: `REF: ${docRef}`,
+    badgeText: "SYSTEM ARCHITECTURE · OFFICIAL",
+  });
+
+  y = 74;
+
+  // Section 3: UI Design System & 3D Visual Pipeline
+  y = drawSectionHeading(doc, y, "3. UI Design System, 3D Visuals & Animation Pipeline");
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Module", "Technology", "Application & Description"]],
+    body: [
+      ["Styling System", "Tailwind CSS v4", "Utility-first design system with dark/light HSL CSS color variables"],
+      ["Headless UI", "Radix UI Primitives", "Accessible headless UI components (Dialog, Tabs, Select, Switch, Slider)"],
+      ["Icons Suite", "Lucide React", "Scalable vector icon suite across navigation and administrative dashboards"],
+      ["3D Graphics", "Three.js & R3F", "Interactive 3D canvas rendering for hero landing scenes (src/components/landing)"],
+      ["Animations", "Framer Motion & GSAP", "Smooth micro-animations, page transitions, and landing scroll effects"],
+      ["Smooth Scroll", "Lenis Scroll", "High-performance smooth inertia scrolling system for modern UX"],
+    ],
+    styles: { fontSize: 8, cellPadding: 6, font: "helvetica" },
+    headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    margin: { left: 16, right: 16 },
+  });
+
+  y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y + 120;
+  y += 16;
+
+  // Section 4: Canteen AI Engine & Data Export Framework
+  y = drawSectionHeading(doc, y, "4. Canteen AI Engine & Data Export Framework");
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Feature", "Technology", "Implementation & Specifications"]],
+    body: [
+      ["Multi-LLM Engine", "Gemini / Groq / Grok", "Hybrid LLM provider engine with fallback to smart local recommendation mode"],
+      ["Voice STT", "Web Speech API", "Browser-native Speech-to-Text engine for hands-free voice food ordering"],
+      ["PDF Engine", "jsPDF & AutoTable", "Client/SSR branded document rendering for Whitepapers, Invoices & Receipts"],
+      ["Spreadsheets", "Write-Excel-File", "Automated Excel report generation for admin sales & inventory auditing"],
+    ],
+    styles: { fontSize: 8, cellPadding: 6, font: "helvetica" },
+    headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    margin: { left: 16, right: 16 },
+  });
+
+  y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y + 100;
+  y += 16;
+
+  // Section 5: Cloud Infrastructure & Compliance Standards
+  y = drawSectionHeading(doc, y, "5. Hosting, Edge Infrastructure & Security Compliance");
+
+  const sec5Bullets = [
+    "• Vercel Global Edge Network: Production deployment hosted live at https://canteenos-hub.vercel.app with automated CI/CD builds from GitHub main.",
+    "• Cloudflare WAF & TLS 1.3: Edge network firewall filtering DDoS, SQLi, and XSS attacks over encrypted TLS 1.3 transport.",
+    "• Regulatory Compliance Readiness: Architecture aligns with India's DPDP Act 2023, GDPR guidelines, and SOC 2 Type II trust criteria.",
+  ];
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.setTextColor(51, 65, 85);
+  sec5Bullets.forEach((bullet) => {
+    const lines = doc.splitTextToSize(bullet, 550);
+    doc.text(lines, 24, y);
+    y += lines.length * 11 + 3;
+  });
+
+  // Draw Footers on both pages
+  drawCanteenOSFooter(doc, 1, 2);
+  doc.setPage(2);
+  drawCanteenOSFooter(doc, 2, 2);
+
+  return doc;
+}

@@ -32,9 +32,9 @@ function ContactPage() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const downloadSecurityReport = () => {
+  const downloadSecurityReport = async () => {
     try {
-      const doc = generateSecurityWhitepaperPDF({
+      const doc = await generateSecurityWhitepaperPDF({
         authorName: "Ranjit Patra",
         authorEmail: "ranjitpatra2611@gmail.com",
       });

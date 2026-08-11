@@ -110,9 +110,9 @@ function CheckoutPlanPage() {
   const tax = Math.round(basePrice * 0.18);
   const totalAmount = basePrice + tax;
 
-  const downloadInvoice = () => {
+  const downloadInvoice = async () => {
     try {
-      const doc = generateTaxInvoicePDF({
+      const doc = await generateTaxInvoicePDF({
         planKey,
         planName: plan.name,
         billingCycle,

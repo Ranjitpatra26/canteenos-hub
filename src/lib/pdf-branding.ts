@@ -1,5 +1,4 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import type jsPDF from "jspdf";
 
 export interface SecurityReportOptions {
   docRef?: string;
@@ -68,16 +67,12 @@ export function drawCanteenOSHeader(
   doc.roundedRect(16, 12, 32, 32, 6, 6, "F");
 
   // Stylized CanteenOS Emblem inside logo badge
-  // Outer circle cut
   doc.setFillColor(15, 23, 42);
   doc.circle(32, 28, 9, "F");
-  // Inner ring fill
   doc.setFillColor(132, 204, 22);
   doc.circle(32, 28, 5, "F");
-  // Chef hat / OS terminal notch
   doc.setFillColor(132, 204, 22);
   doc.rect(30, 22, 9, 8, "F");
-  // Center flame core
   doc.setFillColor(15, 23, 42);
   doc.circle(32, 27, 2, "F");
 
@@ -167,9 +162,11 @@ export function drawSectionHeading(doc: jsPDF, y: number, text: string): number 
 
 /**
  * Generates the full, comprehensive Enterprise Security & Compliance Whitepaper PDF.
+ * Uses dynamic import so jsPDF is never loaded on SSR server.
  */
-export function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions): jsPDF {
-  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+export async function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions): Promise<jsPDF> {
+  const { default: JsPDF } = await import("jspdf");
+  const doc = new JsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
   const docRef = opts?.docRef ?? `COS-SEC-2026-V2`;
   const publishedDate = opts?.publishedDate ?? new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -379,9 +376,12 @@ export function generateSecurityWhitepaperPDF(opts?: SecurityReportOptions): jsP
 
 /**
  * Generates a branded Tax Invoice PDF for subscription checkouts.
+ * Uses dynamic imports so jsPDF is never loaded on SSR server.
  */
-export function generateTaxInvoicePDF(opts: InvoiceOptions): jsPDF {
-  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+export async function generateTaxInvoicePDF(opts: InvoiceOptions): Promise<jsPDF> {
+  const { default: JsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+  const doc = new JsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
   const invoiceNo = `COS-INV-${Math.floor(100000 + Math.random() * 900000)}`;
   const dateStr = new Date().toLocaleDateString("en-IN", {
     day: "numeric",
@@ -504,9 +504,12 @@ export function generateTaxInvoicePDF(opts: InvoiceOptions): jsPDF {
 
 /**
  * Generates a branded Student Order Receipt PDF.
+ * Uses dynamic imports so jsPDF is never loaded on SSR server.
  */
-export function generateOrderReceiptPDF(opts: OrderReceiptOptions): jsPDF {
-  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+export async function generateOrderReceiptPDF(opts: OrderReceiptOptions): Promise<jsPDF> {
+  const { default: JsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+  const doc = new JsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
   const dateStr = opts.placedAt ? new Date(opts.placedAt).toLocaleString("en-IN") : new Date().toLocaleString("en-IN");
 
   drawCanteenOSHeader(doc, {

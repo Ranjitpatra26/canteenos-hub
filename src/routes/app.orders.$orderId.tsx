@@ -41,10 +41,10 @@ function OrderDetail() {
   useRealtimeOrders();
   const { data: order, isLoading } = useOrder(orderId);
 
-  const downloadReceipt = () => {
+  const downloadReceipt = async () => {
     if (!order) return;
     try {
-      const doc = generateOrderReceiptPDF({
+      const doc = await generateOrderReceiptPDF({
         orderId: order.id,
         code: order.code,
         placedAt: order.placedAt,

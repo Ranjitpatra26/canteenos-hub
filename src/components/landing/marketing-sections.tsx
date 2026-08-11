@@ -573,9 +573,9 @@ export function Security() {
               <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
                 <Button
                   className="flex-1 rounded-xl gap-2"
-                  onClick={() => {
+                  onClick={async () => {
                     try {
-                      const doc = generateSecurityWhitepaperPDF({
+                      const doc = await generateSecurityWhitepaperPDF({
                         authorName: "Ranjit Patra",
                         authorEmail: "ranjitpatra2611@gmail.com",
                       });

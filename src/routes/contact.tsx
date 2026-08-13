@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   Building2,
   CheckCircle2,
-  Cpu,
   Download,
   Mail,
   MessageSquare,
@@ -16,7 +15,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
-import { generateSecurityWhitepaperPDF, generateTechStackPDF } from "@/lib/pdf-branding";
+import { generateSecurityWhitepaperPDF } from "@/lib/pdf-branding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,15 +49,7 @@ function ContactPage() {
     }
   };
 
-  const downloadTechStackReport = async () => {
-    try {
-      const doc = await generateTechStackPDF();
-      doc.save("CanteenOS-Tech-Stack-Architecture-Specification.pdf");
-      toast.success("Tech Stack Architecture Specification PDF downloaded successfully! 🚀");
-    } catch {
-      toast.error("Could not generate Tech Stack PDF.");
-    }
-  };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,23 +161,7 @@ function ContactPage() {
                 </Button>
               </div>
 
-              {/* PDF Tech Stack Architecture Download Card */}
-              <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <Cpu className="size-4 text-primary" />
-                  <span>Tech Stack & Architecture Specification</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground">
-                  Download full PDF detailing React 19, Supabase RLS, TanStack Start SSR, Tailwind v4, and Canteen AI architecture.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={downloadTechStackReport}
-                  className="w-full mt-2 gap-2 rounded-xl text-xs"
-                >
-                  <Download className="size-3.5" /> Download Tech Stack PDF
-                </Button>
-              </div>
+
             </div>
           </div>
 
